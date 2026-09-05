@@ -1,0 +1,16 @@
+{
+  "name": "KOPERASI MITRA JAYA (KMJ)",
+  "short_name": "KMJ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#087d3e",
+  "icons": [
+    {
+      "src": "icon logo kmj.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
