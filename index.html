@@ -21,14 +21,10 @@
         }
 
 
-
-
         body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#f7f9fc,#eef3f9);color:var(--d)}
         .hidden{display:none!important}
         .container{max-width:1240px;margin:auto;padding:12px}
         .card,.book{background:#fff;border:1px solid #e1e6ef;border-radius:15px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px #0f172a0d}
-
-
 
 
         button{border:0;border-radius:10px;min-height:42px;padding:10px 15px;background:var(--p);color:#fff;font-weight:700;cursor:pointer}
@@ -36,15 +32,11 @@
         .btn-danger{background:#fff0f0;color:#b42318;border:1px solid #f4c7c7}
 
 
-
-
         input,select{width:100%;min-height:42px;padding:9px 10px;border:1px solid #d9dee7;border-radius:99px;background:#fff;font-size:14px}
         label{display:block;font-weight:700;margin-bottom:5px}
         .form-group{margin-bottom:14px}
         .login-box{max-width:420px;margin:70px auto}
         .status-success{color:#16803c;font-weight:700}
-
-
 
 
         /* Header & Navigasi Utama */
@@ -61,15 +53,11 @@
         .nav-bar button.active{background:#ffffff24}
 
 
-
-
         /* Dashboard Cash Box & Visual Modern */
         .cash{background:linear-gradient(135deg,#063d20,#0b9146);color:#fff;border-radius:14px;padding:12px 18px;margin-bottom:14px}
         .cash small{opacity:.9;font-size:11px}
         .cash strong{display:block;font-size:24px;margin:2px 0}
         .cash span{font-size:11px;opacity:.9}
-
-
 
 
         .dashboard-analytics{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;margin-bottom:16px}
@@ -79,19 +67,13 @@
         .line-chart-container{position:relative;width:100%;height:220px}
 
 
-
-
         .page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
         .page-head h1{margin:0 0 5px;font-size:28px}
         .page-head p{margin:0;color:#667085}
 
 
-
-
         .toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
         .info{background:#e8f5e9;border-left:4px solid var(--g);padding:11px;border-radius:8px;margin-top:13px;color:#1b5e20}
-
-
 
 
         /* Styling Tabel Rekap & Ekspedisi */
@@ -112,8 +94,6 @@
             font-weight:600;
             font-size:13px;
         }
-
-
 
 
         .resort-name{font-weight:700;background:#f7f9fc}
@@ -154,16 +134,12 @@
         .date-today-btn:disabled{background:#9ca3af;cursor:not-allowed}
 
 
-
-
         /* Buku Ekspedisi */
         .book{padding:0;overflow:hidden}
         .book table{width:100%;border-collapse:collapse;table-layout:fixed}
         .book th,.book td{border:1px solid #e1e5eb;padding:7px;vertical-align:middle}
         .book th{background:var(--g);color:#ffffff;text-align:center;font-size:12px;font-weight:700}
         .book td.amount{text-align:right;font-weight:700;white-space:nowrap;background:var(--bg-calc)}
-
-
 
 
         .exp-table{min-width:760px}
@@ -176,14 +152,10 @@
         .exp-final td.amount{color:#16803c;font-size:15px}
 
 
-
-
         .exp-expense-cell{padding:3px!important}
         .exp-expense-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 58px;gap:5px;margin:3px}
         .exp-expense-row input{min-height:32px;height:32px;border-radius:6px;border:1px solid #b0c4de;background:#fff}
         .exp-delete{background:#fff0f0;color:#d62828;border:1px solid #f1b5b5;padding:5px 7px;min-height:32px;width:100%;font-size:12px;border-radius:6px}
-
-
 
 
         /* Styling Buku Simpanan & Buku Bon Karyawan */
@@ -197,13 +169,9 @@
         .staff-note{background:#f5fbf7;border-left:4px solid var(--g);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#1b5e20}
 
 
-
-
         #bonPage .staff th{background:var(--amber);color:#ffffff;font-size:13px;font-weight:700}
         #bonPage .staff .total td{background:var(--amber-total);color:var(--amber-text);font-weight:700;font-size:13px}
         .staff-note{background:var(--amber-bg);border-left:4px solid var(--amber);color:var(--amber-text);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px}
-
-
 
 
         .name-box{display:flex;align-items:center;gap:6px}
@@ -213,12 +181,8 @@
         .person-remove:hover{background:#fca5a5!important;color:#7f1d1d!important;}
 
 
-
-
         .staff input.money{min-height:34px;height:34px;padding:4px 8px;border-radius:6px;border:1px solid #b0c4de;font-weight:600;font-size:13px;text-align:right;background:#ffffff!important;}
         .staff td[id^="sr-"]{background:var(--bg-calc);font-weight:700;text-align:right;font-size:13px}
-
-
 
 
         .staff-date-head{display:flex;align-items:center;justify-content:center;gap:6px}
@@ -227,6 +191,20 @@
         .date-remove:hover{background:rgba(255,255,255,0.4)!important}
 
 
+        /* CUSTOM FIXES */
+        /* Buku Simpanan (Lebar Nama) */
+        #simpPage .staff th:first-child { min-width: 220px; }
+        #simpPage .name-box input.name-input { min-width: 150px; }
+
+
+        /* Buku Bon (Lebih Ramping) */
+        #bonPage .staff th { font-size: 11px; padding: 4px 6px; }
+        #bonPage .staff td { padding: 4px 2px; }
+        #bonPage .staff input.money { padding: 4px; font-size: 12px; min-width: 70px; min-height: 30px; height: 30px; }
+        #bonPage .name-box input.name-input { min-width: 90px; min-height: 30px; height: 30px; font-size: 12px; padding: 4px; }
+        
+        /* Tombol Terkunci Umum */
+        button.terkunci { background-color: #cbd5e1 !important; color: #475569 !important; border-color: #94a3b8 !important; cursor: pointer; opacity: 0.9; }
 
 
         .save-bar{position:fixed;left:0;right:0;bottom:0;z-index:8999;background:#fffffffa;border-top:1px solid #dfe5ee;box-shadow:0 -5px 18px #0f172a1a;padding:10px 12px;display:flex;justify-content:center;backdrop-filter:blur(7px);}
@@ -239,18 +217,12 @@
         .save-spacer{height:68px}
 
 
-
-
         .save-popup{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:none;background:#1261e8;color:#fff;padding:11px 20px;border-radius:999px;font-weight:700}
         .save-popup.show{display:flex}
 
 
-
-
         input.terkunci {background-color: #f1f5f9 !important;color: #64748b !important;cursor: pointer;border-color: #cbd5e1 !important;}
         input.terkunci:hover {border-color: #d62828 !important;}
-
-
 
 
         @media(max-width:1024px){.dashboard-analytics{grid-template-columns:repeat(2, 1fr)}}
@@ -259,19 +231,14 @@
     </style>
 
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Kunci dan URL Supabase Baru Anda
         const SUPABASE_URL="https://pocfpichrpfwrxloxima.supabase.co";
         const SUPABASE_PUBLISHABLE_KEY="sb_publishable_UdrPJAMY5afUWK80e_6B5A_XKrzUwz8";
         
         const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
         const resortNames=["Jaya 1","Jaya 2","Jaya 3"],namaBulan=["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-
-
 
 
         const PIN_KASIR = "123456"; 
@@ -300,33 +267,47 @@
                     inp.onfocus = handlePinPrompt;
                 }
             });
+
+
+            // Kunci tombol tambah pengeluaran & hapus setelah tersimpan
+            document.querySelectorAll('.btn-tambah-pengeluaran').forEach(btn => btn.classList.add('terkunci'));
+            document.querySelectorAll('.exp-delete').forEach(btn => btn.classList.add('terkunci'));
         }
-
-
 
 
         async function syncFromCloud(){try{const{data,error}=await supabaseClient.from('Koperasi_store').select('*');if(error){console.error("Cloud sync error:",error);return}if(data){data.forEach(r=>{if(r.K&&r.V){localStorage.setItem(r.K,typeof r.V==='string'?r.V:JSON.stringify(r.V))}})}}catch(e){console.error("Cloud sync exception:",e)}}
 
 
-
-
         async function saveToCloud(key,dataObj){try{const{data,error}=await supabaseClient.from('Koperasi_store').upsert({K:key,V:dataObj});if(error){alert("GAGAL SIMPAN KE SUPABASE:\n"+error.message+"\n(Kode: "+error.code+")");return false}return true}catch(e){alert("GAGAL KONEKSI CLOUD:\n"+e.message);return false}}
-
-
 
 
         document.addEventListener("DOMContentLoaded",async()=>{setDefaultPeriod();const{data:{session}}=await supabaseClient.auth.getSession();if(session)masukAplikasi()}); 
         supabaseClient.auth.onAuthStateChange((e,s)=>{if(s)masukAplikasi()}); 
 
 
+        let kmjDirty=false;
+        let kmjPage="";
+
+
+        // Sistem Pop-Up Navigasi Pindah Buku
+        function showConfirmModal() {
+            return new Promise(resolve => {
+                const m = document.getElementById('confirmModal');
+                m.classList.remove('hidden');
+                window.resolveConfirm = function(ans) {
+                    m.classList.add('hidden');
+                    resolve(ans);
+                };
+            });
+        }
 
 
         async function masukAplikasi(){loginPage.classList.add("hidden");appHeader.classList.remove("hidden");await syncFromCloud();const p=localStorage.getItem("halamanTerakhir");if(p==="rekap")bukaRekap();else if(p==="ekspedisi")bukaEkspedisi();else if(p==="simp")bukaSimpanan();else if(p==="bon")bukaBon();else tampilDashboard()} 
         function hidePages(){["dashboardPage","rekapPage","ekspedisiPage","simpPage","bonPage"].forEach(x=>document.getElementById(x).classList.add("hidden"))} 
         function setActiveNav(n){document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===n))} 
         
-        function tampilDashboard(){
-            if(!bolehPindah(""))return;
+        async function tampilDashboard(){
+            if(kmjDirty && !(await showConfirmModal())) return;
             setPage("");hidePages();
             dashboardPage.classList.remove("hidden");
             setActiveNav("");
@@ -335,17 +316,24 @@
             setTimeout(renderDashboardCharts, 100); 
         } 
         
-        function bukaRekap(){if(!bolehPindah("rekap"))return;setPage("rekap");hidePages();rekapPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","rekap");setActiveNav("rekap");buatRekap()} 
-        function bukaEkspedisi(){if(!bolehPindah("ekspedisi"))return;setPage("ekspedisi");hidePages();ekspedisiPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","ekspedisi");setActiveNav("ekspedisi");sinkronPeriodeEkspedisi();buatEkspedisi()} 
-        function bukaSimpanan(){if(!bolehPindah("simp"))return;setPage("simp");hidePages();simpPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","simp");setActiveNav("simp");renderStaff("simp")} 
-        function bukaBon(){if(!bolehPindah("bon"))return;setPage("bon");hidePages();bonPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","bon");setActiveNav("bon");renderStaff("bon")} 
+        async function bukaRekap(){
+            if(kmjDirty && !(await showConfirmModal())) return;
+            setPage("rekap");hidePages();rekapPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","rekap");setActiveNav("rekap");buatRekap();
+        } 
+        async function bukaEkspedisi(){
+            if(kmjDirty && !(await showConfirmModal())) return;
+            setPage("ekspedisi");hidePages();ekspedisiPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","ekspedisi");setActiveNav("ekspedisi");sinkronPeriodeEkspedisi();buatEkspedisi();
+        } 
+        async function bukaSimpanan(){
+            if(kmjDirty && !(await showConfirmModal())) return;
+            setPage("simp");hidePages();simpPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","simp");setActiveNav("simp");renderStaff("simp");
+        } 
+        async function bukaBon(){
+            if(kmjDirty && !(await showConfirmModal())) return;
+            setPage("bon");hidePages();bonPage.classList.remove("hidden");localStorage.setItem("halamanTerakhir","bon");setActiveNav("bon");renderStaff("bon");
+        } 
         async function logout(){const{error}=await supabaseClient.auth.signOut();if(error){alert(error.message);return}localStorage.removeItem("halamanTerakhir");location.reload()} 
         async function login(){const email=document.getElementById("email").value.trim(),password=document.getElementById("password").value.trim();if(!email||!password){loginMessage.textContent="Email dan password wajib diisi.";return}loginMessage.textContent="Memeriksa login...";const{error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){loginMessage.textContent=error.message;return}loginMessage.textContent="";masukAplikasi()} 
-        
-        let kmjDirty=false;
-        let kmjPage="";
-
-
 
 
         function tandaiPerubahan(){kmjDirty=true;updateSaveButton()}
@@ -364,16 +352,7 @@
             btn.setAttribute("aria-disabled",String(!aktif));
             btn.title=aktif?"Simpan perubahan":"Isi tanggal hari ini terlebih dahulu.";
         }
-        function bolehPindah(next){
-            if(kmjDirty){
-                alert("Masih ada perubahan yang belum disimpan. Silakan klik Simpan terlebih dahulu sebelum berpindah buku.");
-                return false;
-            }
-            return true;
-        }
         function setPage(n){kmjPage=n;kmjDirty=false;updateSaveButton()}
-
-
 
 
         function jumlahHari(b,t){return new Date(t,b,0).getDate()}
@@ -405,15 +384,11 @@
         } 
 
 
-
-
         function buatRekap(){const b=+bulan.value,t=+tahun.value;if(!b||!t)return;rekapContainer.innerHTML="";for(let h=1;h<=jumlahHari(b,t);h++)buatHari(h,b,t);loadData();updateSaveButton()} 
         function buatHari(h,b,t){const box=document.createElement("div");box.className="card";box.innerHTML=`<div class="table-wrap"><table class="rekap-table"><thead><tr><th>Tanggal</th><th>Nama Resort</th><th>Storting</th><th>Tunai<br>Pasar</th><th>Tabungan<br>5%</th><th>ADM<br>5%</th><th>Jumlah</th><th>Drop</th><th>Drop<br>20%</th><th>Drop<br>120%</th><th>Tabungan<br>Keluar</th><th>Saldo</th></tr></thead><tbody id="tbody-${h}"></tbody></table></div>`;rekapContainer.appendChild(box);const tb=document.getElementById("tbody-"+h),dk=`${t}-${b}-${h}`;resortNames.forEach((n,i)=>{const k=dk+"-"+i,r=document.createElement("tr");r.innerHTML=`${i===0?`<td class="date-cell" rowspan="3"><div class="date-action-box"><input class="manual-date" type="date" id="tanggal-${dk}" readonly><button type="button" class="date-today-btn no-print" onclick="buatTanggalHariIni('rekap','${dk}')">TANGGAL</button></div></td>`:""}<td class="resort-name">${n}</td><td><input type="text" inputmode="numeric" id="storting-${k}" oninput="formatInput(this)"></td><td class="calculated" id="tunai-${k}">0</td><td class="calculated" id="tabungan5-${k}">0</td><td class="calculated" id="adm5-${k}">0</td><td class="calculated" id="jumlah-${k}">0</td><td><input type="text" inputmode="numeric" id="drop-${k}" oninput="formatInput(this)"></td><td class="calculated" id="drop20-${k}">0</td><td class="calculated" id="drop120-${k}">0</td><td><input type="text" inputmode="numeric" id="tabunganKeluar-${k}" oninput="formatInput(this)"></td><td class="calculated" id="saldo-${k}">0</td>`;tb.appendChild(r)});const mk=(cl,l,p)=>{const r=document.createElement("tr");r.className=cl;r.innerHTML=`<td colspan="2">${l}</td>${["Storting","Tunai","Tabungan5","Adm5","Jumlah","Drop","Drop20","Drop120","TabunganKeluar","Saldo"].map(x=>`<td id="${p}${x}-${h}">0</td>`).join("")}`;tb.appendChild(r)};mk("saldo-awal-row","Saldo awal","awal");mk("total-row","Total hari","total");mk("saldo-akhir-row","Saldo akhir","akhir")} 
         
         function hitungSemuaHari(){const b=+bulan.value,t=+tahun.value;if(!b||!t)return;let awal={storting:0,tunai:0,tabungan5:0,adm5:0,jumlah:0,drop:0,drop20:0,drop120:0,tabunganKeluar:0,saldo:0};for(let h=1;h<=jumlahHari(b,t);h++)awal=hitungHari(h,b,t,awal).akhir} 
         function hitungHari(h,b,t,awal){let tot={storting:0,tunai:0,tabungan5:0,adm5:0,jumlah:0,drop:0,drop20:0,drop120:0,tabunganKeluar:0,saldo:0};resortNames.forEach((n,i)=>{const k=`${t}-${b}-${h}-${i}`,st=nilai("storting-"+k),dr=nilai("drop-"+k),tk=nilai("tabunganKeluar-"+k),tb5=dr*.05,adm=dr*.05,j=st+tb5+adm,keb=dr+tk,tun=j<keb?keb-j:0,sd=j>=keb?j-keb:0;setText("tunai-"+k,tun);setText("tabungan5-"+k,tb5);setText("adm5-"+k,adm);setText("jumlah-"+k,j);setText("drop20-"+k,dr*.2);setText("drop120-"+k,dr*1.2);setText("saldo-"+k,sd);tot.storting+=st;tot.tunai+=tun;tot.tabungan5+=tb5;tot.adm5+=adm;tot.jumlah+=j;tot.drop+=dr;tot.drop20+=dr*.2;tot.drop120+=dr*1.2;tot.tabunganKeluar+=tk;tot.saldo+=sd});Object.keys(tot).forEach(x=>{const c=x[0].toUpperCase()+x.slice(1);setText("awal"+c+"-"+h,awal[x]);setText("total"+c+"-"+h,tot[x])});const akhir={};Object.keys(tot).forEach(x=>akhir[x]=awal[x]+tot[x]);Object.keys(akhir).forEach(x=>setText("akhir"+x[0].toUpperCase()+x.slice(1)+"-"+h,akhir[x]));return{akhir}} 
-
-
 
 
         async function simpanData(){if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const b=+bulan.value,t=+tahun.value,d={bulan:b,tahun:t,hari:{}};for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`;d.hari[h]={tanggal:document.getElementById("tanggal-"+k)?.value||"",items:resortNames.map((n,i)=>({storting:nilai(`storting-${k}-${i}`),drop:nilai(`drop-${k}-${i}`),tabunganKeluar:nilai(`tabunganKeluar-${k}-${i}`)}))}}const key=`koperasi-rekap-${t}-${b}`;localStorage.setItem(key,JSON.stringify(d));const ok=await saveToCloud(key,d);if(ok){statusData.textContent=`Data ${namaBulan[b]} ${t} berhasil disimpan online.`;statusData.className="status-success";kmjDirty=false;updateSaveButton();tampilTersimpan();terapkanKunciKeamanan();}} 
@@ -439,8 +414,6 @@
         } 
 
 
-
-
         function sinkronPeriodeEkspedisi(){ekspedisiBulan.value=bulan.value;ekspedisiTahun.value=tahun.value} 
         function ambilDataRekap(b,t){try{return JSON.parse(localStorage.getItem(`koperasi-rekap-${t}-${b}`))}catch(e){return null}} 
         function ambilDataEkspedisi(b,t){try{return JSON.parse(localStorage.getItem(`koperasi-ekspedisi-${t}-${b}`))}catch(e){return null}} 
@@ -450,13 +423,30 @@
         function ambilSaldoKasAwalEkspedisi(b,t){const d=ambilDataEkspedisi(b,t);if(d?.saldoKasAwal!==undefined)return parseAngka(d.saldoKasAwal);let pb=b-1,pt=t;if(pb===0){pb=12;pt--}const p=ambilDataEkspedisi(pb,pt);return parseAngka(p?.saldoKasAkhir)} 
         
         function buatEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value;ekspedisiContainer.innerHTML="";const s=ambilDataEkspedisi(b,t);for(let h=1;h<=jumlahHari(b,t);h++)buatHariEkspedisi(h,b,t,s);loadEkspedisi();updateSaveButton()} 
-        function buatHariEkspedisi(h,b,t,s){const k=`${t}-${b}-${h}`,d=s?.hari?.[h]||{},box=document.createElement("div");box.className="book";box.innerHTML=`<div class="table-wrap"><table class="exp-table"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Catatan</th><th>Jumlah (Rp)</th></tr></thead><tbody><tr class="exp-opening"><td rowspan="7"><div class="date-action-box"><input class="manual-date" type="date" id="exp-tanggal-${k}" value="${d.tanggal||""}" readonly><button type="button" class="date-today-btn no-print" onclick="buatTanggalHariIni('ekspedisi','${k}')">TANGGAL</button></div></td><td><b>Saldo kas</b></td><td>saldo hari sebelumnya</td><td class="amount" id="exp-awal-${k}">0</td></tr><tr class="exp-income"><td><b>Kas masuk</b></td><td>dari Buku Rekap</td><td class="amount" id="exp-masuk-${k}">0</td></tr><tr><td><b>Pengeluaran</b></td><td colspan="2" class="exp-expense-cell"><div id="exp-list-${k}"></div><button class="btn-secondary no-print" onclick="tambahPengeluaran('${k}')">Tambah Pengeluaran</button></td></tr><tr class="exp-expense-total"><td><b>Jumlah pengeluaran</b></td><td></td><td class="amount" id="exp-pengeluaran-${k}">0</td></tr><tr class="exp-temporary"><td><b>Kas sementara</b></td><td>saldo kas + kas masuk - pengeluaran</td><td class="amount" id="exp-sementara-${k}">0</td></tr><tr><td><b>Tunai pasar</b></td><td>dari Buku Rekap</td><td class="amount" id="exp-tunai-${k}">0</td></tr><tr class="exp-final"><td><b>Saldo kas</b></td><td>menjadi saldo awal besok</td><td class="amount" id="exp-akhir-${k}">0</td></tr></tbody></table></div>`;ekspedisiContainer.appendChild(box);const l=document.getElementById("exp-list-"+k);(d.pengeluaran?.length?d.pengeluaran:[{}]).forEach((x,i)=>buatBarisPengeluaran(l,k,i,x.keterangan||"",x.jumlah||""))} 
+        function buatHariEkspedisi(h,b,t,s){const k=`${t}-${b}-${h}`,d=s?.hari?.[h]||{},box=document.createElement("div");box.className="book";box.innerHTML=`<div class="table-wrap"><table class="exp-table"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Catatan</th><th>Jumlah (Rp)</th></tr></thead><tbody><tr class="exp-opening"><td rowspan="7"><div class="date-action-box"><input class="manual-date" type="date" id="exp-tanggal-${k}" value="${d.tanggal||""}" readonly><button type="button" class="date-today-btn no-print" onclick="buatTanggalHariIni('ekspedisi','${k}')">TANGGAL</button></div></td><td><b>Saldo kas</b></td><td>saldo hari sebelumnya</td><td class="amount" id="exp-awal-${k}">0</td></tr><tr class="exp-income"><td><b>Kas masuk</b></td><td>dari Buku Rekap</td><td class="amount" id="exp-masuk-${k}">0</td></tr><tr><td><b>Pengeluaran</b></td><td colspan="2" class="exp-expense-cell"><div id="exp-list-${k}"></div><button class="btn-secondary btn-tambah-pengeluaran no-print" onclick="handleTambahPengeluaran(event, '${k}')">Tambah Pengeluaran</button></td></tr><tr class="exp-expense-total"><td><b>Jumlah pengeluaran</b></td><td></td><td class="amount" id="exp-pengeluaran-${k}">0</td></tr><tr class="exp-temporary"><td><b>Kas sementara</b></td><td>saldo kas + kas masuk - pengeluaran</td><td class="amount" id="exp-sementara-${k}">0</td></tr><tr><td><b>Tunai pasar</b></td><td>dari Buku Rekap</td><td class="amount" id="exp-tunai-${k}">0</td></tr><tr class="exp-final"><td><b>Saldo kas</b></td><td>menjadi saldo awal besok</td><td class="amount" id="exp-akhir-${k}">0</td></tr></tbody></table></div>`;ekspedisiContainer.appendChild(box);const l=document.getElementById("exp-list-"+k);(d.pengeluaran?.length?d.pengeluaran:[{}]).forEach((x,i)=>buatBarisPengeluaran(l,k,i,x.keterangan||"",x.jumlah||""))} 
         function buatBarisPengeluaran(l,k,i,ket,jml){const r=document.createElement("div");r.className="exp-expense-row";r.innerHTML=`<input type="text" id="exp-ket-${k}-${i}" value="${escapeHtml(ket)}" placeholder="Keterangan" oninput="hitungEkspedisi()"><input type="text" inputmode="numeric" id="exp-jml-${k}-${i}" value="${jml?angka(jml):""}" placeholder="0" oninput="formatInputEkspedisi(this)"><button class="exp-delete no-print" onclick="hapusPengeluaran('${k}',${i})">Hapus</button>`;l.appendChild(r)} 
+        
+        function handleTambahPengeluaran(e, k) {
+            if (e.target.classList.contains('terkunci')) {
+                const pin = prompt("Data sudah tersimpan. Masukkan PIN Admin untuk menambah pengeluaran baru:");
+                if (pin === PIN_KASIR) {
+                    e.target.classList.remove('terkunci');
+                    tambahPengeluaran(k);
+                } else if (pin !== null) {
+                    alert("PIN SALAH!");
+                }
+            } else {
+                tambahPengeluaran(k);
+            }
+        }
         function tambahPengeluaran(k){const l=document.getElementById("exp-list-"+k);buatBarisPengeluaran(l,k,l.children.length,"","");tandaiPerubahan()} 
         
         function hapusPengeluaran(k,i){
             const inp = document.getElementById(`exp-jml-${k}-${i}`);
-            if(inp && inp.classList.contains('terkunci')) {
+            // Periksa jika tombol ini atau inputnya terkunci
+            const isTerkunci = (inp && inp.classList.contains('terkunci')) || document.querySelector(`#exp-list-${k} .exp-delete`).classList.contains('terkunci');
+            
+            if(isTerkunci) {
                 const pin = prompt("Data sudah tersimpan. Masukkan PIN Admin untuk menghapus baris ini:");
                 if (pin !== PIN_KASIR) {
                     if(pin !== null) alert("PIN SALAH!");
@@ -475,19 +465,13 @@
         } 
 
 
-
-
         function formatInputEkspedisi(e){e.value=e.value===""?"":angka(parseAngka(e.value));hitungEkspedisi();tandaiPerubahan()} 
         function hitungEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value;let awal=ambilSaldoKasAwalEkspedisi(b,t);for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`,rows=document.querySelectorAll("#exp-list-"+k+" .exp-expense-row");let pe=0;rows.forEach((r,i)=>pe+=parseAngka(document.getElementById(`exp-jml-${k}-${i}`)?.value));const masuk=ambilKasMasukRekap(h,b,t),tunai=ambilTunaiPasarRekap(h,b,t),sementara=awal+masuk-pe,akhir=sementara-tunai;setText("exp-awal-"+k,awal);setText("exp-masuk-"+k,masuk);setText("exp-pengeluaran-"+k,pe);setText("exp-sementara-"+k,sementara);setText("exp-tunai-"+k,tunai);setText("exp-akhir-"+k,akhir);awal=akhir}updateCash()} 
         
         function loadEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value,s=ambilDataEkspedisi(b,t);if(!s){hitungEkspedisi();terapkanKunciKeamanan();return}Object.keys(s.hari||{}).forEach(h=>{const k=`${t}-${b}-${h}`,d=s.hari[h],date=document.getElementById("exp-tanggal-"+k);if(date)date.value=d.tanggal||"";const l=document.getElementById("exp-list-"+k);if(l){l.innerHTML="";(d.pengeluaran||[]).forEach((x,i)=>buatBarisPengeluaran(l,k,i,x.keterangan,x.jumlah));if(!l.children.length)buatBarisPengeluaran(l,k,0,"","")}});hitungEkspedisi();terapkanKunciKeamanan();} 
 
 
-
-
         async function simpanEkspedisi(){if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value,d={bulan:b,tahun:t,saldoKasAwal:ambilSaldoKasAwalEkspedisi(b,t),hari:{}};for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`,p=[];document.querySelectorAll("#exp-list-"+k+" .exp-expense-row").forEach((r,i)=>p.push({keterangan:document.getElementById(`exp-ket-${k}-${i}`).value,jumlah:parseAngka(document.getElementById(`exp-jml-${k}-${i}`).value)}));d.hari[h]={tanggal:document.getElementById("exp-tanggal-"+k)?.value||"",pengeluaran:p}}let a=d.saldoKasAwal;for(let h=1;h<=jumlahHari(b,t);h++)a+=ambilKasMasukRekap(h,b,t)-d.hari[h].pengeluaran.reduce((s,x)=>s+x.jumlah,0)-ambilTunaiPasarRekap(h,b,t);d.saldoKasAkhir=a;const key=`koperasi-ekspedisi-${t}-${b}`;localStorage.setItem(key,JSON.stringify(d));const ok=await saveToCloud(key,d);if(ok){hitungEkspedisi();updateCash();statusEkspedisi.textContent=`Data ${namaBulan[b]} ${t} berhasil disimpan online.`;statusEkspedisi.className="status-success";kmjDirty=false;updateSaveButton();tampilTersimpan();terapkanKunciKeamanan();}} 
-
-
 
 
         function staffKey(t){return t==="simp"?"koperasi-simpanan":"koperasi-bon"}
@@ -495,8 +479,6 @@
         function staffData(t){try{const d=JSON.parse(localStorage.getItem(staffKey(t)));return d||{names:staffDefault(),dates:[],v:{}}}catch(e){return{names:staffDefault(),dates:[],v:{}}}} 
         async function saveStaffData(t,d){const key=staffKey(t);localStorage.setItem(key,JSON.stringify(d));return await saveToCloud(key,d)}
         function dateDisplay(s){const[y,m,d]=s.split("-");return`${d}/${m}/${y}`} 
-
-
 
 
         function renderStaff(t){const d=staffData(t),table=document.getElementById(t==="simp"?"simpTable":"bonTable");let head="<thead><tr><th>NAMA PETUGAS</th>";d.dates.forEach((x,i)=>head+=`<th><div class="staff-date-head"><span>${dateDisplay(x)}</span><button class="date-remove no-print" title="Hapus Kolom Tanggal" onclick="removeDate('${t}',${i})">&times;</button></div></th>`);head+=`<th>JUMLAH<br><button class="date-add-btn no-print" onclick="addDate('${t}')">+ TANGGAL</button></th></tr></thead>`;table.innerHTML=head;const tb=document.createElement("tbody");d.names.forEach((n,r)=>{const tr=document.createElement("tr");tr.innerHTML=`<td><div class="name-box"><input class="name-input" value="${escapeHtml(n)}" onchange="renameStaff('${t}',${r},this.value)"><button class="person-remove no-print" title="Hapus Petugas" onclick="removePerson('${t}',${r})">&times;</button></div></td>${d.dates.map(dt=>`<td><input class="money" inputmode="numeric" data-t="${t}" data-r="${r}" data-d="${dt}" value="${d.v[r+"|"+dt]?angka(d.v[r+"|"+dt]):""}" oninput="staffInput(this)"></td>`).join("")}<td id="sr-${t}-${r}">0</td>`;tb.appendChild(tr)});const tr=document.createElement("tr");tr.className="total";tr.innerHTML=`<td>JUMLAH</td>${d.dates.map(dt=>`<td id="sc-${t}-${dt}">0</td>`).join("")}<td id="sg-${t}">0</td>`;tb.appendChild(tr);table.appendChild(tb);calcStaff(t);updateSaveButton();terapkanKunciKeamanan();} 
@@ -545,8 +527,6 @@
         function cetakStaff(){window.print()} 
 
 
-
-
         function latestExp(){let best=null;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k?.startsWith("koperasi-ekspedisi-"))continue;try{const d=JSON.parse(localStorage.getItem(k)),score=(d.tahun||0)*100+(d.bulan||0);if(d.saldoKasAkhir!==undefined&&(!best||score>best.score))best={score,d}}catch(e){}}return best?.d||null} 
         function staffTotal(t){const d=staffData(t);let s=0;d.names.forEach((_,r)=>d.dates.forEach(dt=>s+=parseAngka(d.v[r+"|"+dt])));return s} 
         
@@ -557,14 +537,10 @@
         } 
 
 
-
-
         // --- RENDER GRAFIK DASHBOARD CUSTOM ---
         let pieChartInstance = null;
         let stortingPieChartInstance = null;
         let lineChartInstance = null;
-
-
 
 
         function renderDashboardCharts() {
@@ -574,13 +550,9 @@
             const rekapData = ambilDataRekap(b, t);
 
 
-
-
             let dropJaya1 = 0, dropJaya2 = 0, dropJaya3 = 0;
             let stortingJaya1 = 0, stortingJaya2 = 0, stortingJaya3 = 0;
             const days = jumlahHari(b, t);
-
-
 
 
             if (rekapData && rekapData.hari) {
@@ -595,11 +567,7 @@
             }
 
 
-
-
             const sharedColors = ['#ec4899', '#3b82f6', '#eab308'];
-
-
 
 
             if (pieChartInstance) pieChartInstance.destroy();
@@ -623,8 +591,6 @@
             });
 
 
-
-
             if (stortingPieChartInstance) stortingPieChartInstance.destroy();
             const ctxStortingPie = document.getElementById('stortingPieChart').getContext('2d');
             stortingPieChartInstance = new Chart(ctxStortingPie, {
@@ -646,12 +612,8 @@
             });
 
 
-
-
             let monthlyLabels = [];
             let monthlyDropTotals = [];
-
-
 
 
             let allMonthsData = [];
@@ -681,11 +643,7 @@
             }
 
 
-
-
             allMonthsData.sort((a, b) => a.sortKey - b.sortKey);
-
-
 
 
             allMonthsData.forEach(item => {
@@ -694,14 +652,10 @@
             });
 
 
-
-
             if (monthlyLabels.length === 0) {
                 monthlyLabels.push(namaBulan[b] + " " + t);
                 monthlyDropTotals.push(dropJaya1 + dropJaya2 + dropJaya3);
             }
-
-
 
 
             if (lineChartInstance) lineChartInstance.destroy();
@@ -743,17 +697,26 @@
         }
 
 
-
-
         function escapeHtml(v){return String(v||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))} 
         function setDefaultPeriod(){const n=new Date();bulan.value=n.getMonth()+1;ekspedisiBulan.value=n.getMonth()+1;tahun.value=n.getFullYear();ekspedisiTahun.value=n.getFullYear()} 
         async function simpanHalamanAktif(){if(!kmjPage){tampilTersimpan("Tidak ada buku aktif");return}if(!tanggalHariIniAda()){alert("Silakan isi/tambahkan tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const p=localStorage.getItem("halamanTerakhir");if(p==="rekap")await simpanData();else if(p==="ekspedisi")await simpanEkspedisi();else if(p==="simp")await saveStaff("simp");else if(p==="bon")await saveStaff("bon")} 
     </script>
 </head>
 <body>
+    <!-- Pop Up Konfirmasi Custom -->
+    <div id="confirmModal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15, 23, 42, 0.6);backdrop-filter:blur(3px);z-index:99999;display:flex;align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:24px;border-radius:16px;max-width:340px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+            <h3 style="margin:0 0 10px;color:#d62828;">Perhatian!</h3>
+            <p style="margin:0 0 20px;font-size:14px;color:#344054;">Masih ada perubahan yang belum disimpan. Yakin ingin pindah buku dan membuang perubahan ini?</p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+                <button onclick="resolveConfirm(false)" style="background:#eef1f5;color:#344054;flex:1;">Batal (Simpan Dulu)</button>
+                <button onclick="resolveConfirm(true)" style="background:#d62828;color:#fff;flex:1;">Lanjut Pindah</button>
+            </div>
+        </div>
+    </div>
+
+
     <div id="savePopup" class="save-popup">Tersimpan Online</div>
-
-
 
 
     <div id="loginPage" class="container">
@@ -766,8 +729,6 @@
             <p id="loginMessage"></p>
         </div>
     </div>
-
-
 
 
     <header id="appHeader" class="hidden">
@@ -789,8 +750,6 @@
             <button class="nav-btn" data-page="" onclick="tampilDashboard()">Dashboard</button>
         </nav>
     </header>
-
-
 
 
     <div id="dashboardPage" class="container hidden">
@@ -821,8 +780,6 @@
             </div>
         </div>
     </div>
-
-
 
 
     <div id="rekapPage" class="container hidden">
@@ -857,8 +814,6 @@
     </div>
 
 
-
-
     <div id="ekspedisiPage" class="container hidden">
         <div class="card">
             <div class="page-head">
@@ -890,8 +845,6 @@
     </div>
 
 
-
-
     <div id="simpPage" class="container hidden">
         <div class="card">
             <div class="page-head">
@@ -912,8 +865,6 @@
     </div>
 
 
-
-
     <div id="bonPage" class="container hidden">
         <div class="card">
             <div class="page-head">
@@ -932,8 +883,6 @@
             <div class="save-spacer"></div>
         </div>
     </div>
-
-
 
 
     <div class="save-bar no-print">
