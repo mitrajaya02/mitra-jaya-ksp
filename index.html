@@ -558,48 +558,71 @@
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
+        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         function kirimLaporanWA() {
-            const b = +bulan.value, t = +tahun.value;
+            const b = document.getElementById('bulan') ? +document.getElementById('bulan').value : new Date().getMonth() + 1;
+            const t = document.getElementById('tahun') ? +document.getElementById('tahun').value : new Date().getFullYear();
             const rekap = ambilDataRekap(b, t);
             const ekspedisi = ambilDataEkspedisi(b, t);
-            const today = tanggalHariIni();
+            const today = tanggalHariIni(); 
             
             let hariKe = null;
-            
-            // Cari baris mana di bulan ini yang tanggalnya sama dengan hari ini
+            let displayTgl = today;
+
+            // 1. Cari baris mana yang tanggalnya persis hari ini di UI
             for(let h=1; h<=jumlahHari(b,t); h++) {
                 const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
                 if(dtStr === today) {
                     hariKe = h;
+                    displayTgl = dtStr;
                     break;
                 }
             }
 
+            // 2. Jika tidak ketemu, cari baris terakhir yang sudah ada isinya
             if(!hariKe) {
-                for(let h=1; h<=jumlahHari(b,t); h++) {
-                    if(document.getElementById(`tanggal-${t}-${b}-${h}`)?.value) {
+                for(let h=jumlahHari(b,t); h>=1; h--) {
+                    const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
+                    if(dtStr) {
                         hariKe = h;
+                        displayTgl = dtStr;
                         break;
                     }
                 }
             }
+
+            // 3. Fallback jika bulan ini sama sekali belum diisi
             if(!hariKe) hariKe = new Date().getDate();
 
-            // Hitung akumulasi saldo kas secara berurutan sampai hari ke-h (menyamakan hitungEkspedisi)
+            // Hitung akumulasi saldo kas secara berurutan sampai hari aktif
             let currentSaldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
             let kasMasuk = 0, tunaiPasar = 0, listPengeluaran = [], totalPengeluaran = 0, saldoKasAkhir = 0;
 
             for(let h=1; h<=jumlahHari(b,t); h++) {
-                const k = `${t}-${b}-${h}`;
-                let rows = document.querySelectorAll("#exp-list-"+k+" .exp-expense-row");
-                let pe = 0;
-                rows.forEach(r => {
-                    let jmlInp = r.querySelector('input[inputmode="numeric"]');
-                    if(jmlInp) pe += parseAngka(jmlInp.value);
-                });
-
                 let km = ambilKasMasukRekap(h, b, t);
                 let tp = ambilTunaiPasarRekap(h, b, t);
+                let pe = 0;
+                let tempExpList = [];
+
+                // Ambil nilai pengeluaran dari form UI (jika aktif) atau dari local storage
+                const expListDiv = document.getElementById(`exp-list-${t}-${b}-${h}`);
+                if (expListDiv && expListDiv.children.length > 0) {
+                    let rows = expListDiv.querySelectorAll('.exp-expense-row');
+                    rows.forEach(r => {
+                        let ketInp = r.querySelector('input[type="text"]');
+                        let jmlInp = r.querySelector('input[inputmode="numeric"]');
+                        let amount = jmlInp ? parseAngka(jmlInp.value) : 0;
+                        let desc = ketInp ? ketInp.value : '';
+                        if(desc || amount) {
+                            tempExpList.push({keterangan: desc, jumlah: amount});
+                            pe += amount;
+                        }
+                    });
+                } else if (ekspedisi && ekspedisi.hari && ekspedisi.hari[h] && ekspedisi.hari[h].pengeluaran) {
+                    tempExpList = ekspedisi.hari[h].pengeluaran.filter(x => x.keterangan || x.jumlah);
+                    pe = tempExpList.reduce((s, x) => s + parseAngka(x.jumlah), 0);
+                }
+
                 let sementara = currentSaldoAwal + km - pe;
                 let akhir = sementara - tp;
 
@@ -608,58 +631,51 @@
                     tunaiPasar = tp;
                     totalPengeluaran = pe;
                     saldoKasAkhir = akhir;
-                    
-                    if(ekspedisi && ekspedisi.hari && ekspedisi.hari[h] && ekspedisi.hari[h].pengeluaran) {
-                        listPengeluaran = ekspedisi.hari[h].pengeluaran;
-                    } else {
-                        rows.forEach(r => {
-                            let ketInp = r.querySelector('input[type="text"]');
-                            let jmlInp = r.querySelector('input[inputmode="numeric"]');
-                            if(ketInp || jmlInp) {
-                                listPengeluaran.push({keterangan: ketInp ? ketInp.value : '', jumlah: jmlInp ? parseAngka(jmlInp.value) : 0});
-                            }
-                        });
-                    }
+                    listPengeluaran = tempExpList;
                     break;
                 }
                 currentSaldoAwal = akhir;
             }
 
-            // Ambil data rekap resort hari ini
+            // Ambil data rekap resort (Storting & Drop)
             let itemJaya1 = {storting: 0, drop: 0}, itemJaya2 = {storting: 0, drop: 0}, itemJaya3 = {storting: 0, drop: 0};
-            if(rekap && rekap.hari && rekap.hari[hariKe] && rekap.hari[hariKe].items) {
-                const its = rekap.hari[hariKe].items;
-                if(its[0]) itemJaya1 = its[0];
-                if(its[1]) itemJaya2 = its[1];
-                if(its[2]) itemJaya3 = its[2];
-            } else {
-                const kBase = `${t}-${b}-${hariKe}`;
+            const kBase = `${t}-${b}-${hariKe}`;
+            
+            // Prioritaskan form yang sedang tampil di layar
+            if (document.getElementById(`storting-${kBase}-0`)) {
                 itemJaya1 = {storting: nilai(`storting-${kBase}-0`), drop: nilai(`drop-${kBase}-0`)};
                 itemJaya2 = {storting: nilai(`storting-${kBase}-1`), drop: nilai(`drop-${kBase}-1`)};
                 itemJaya3 = {storting: nilai(`storting-${kBase}-2`), drop: nilai(`drop-${kBase}-2`)};
+            } else if(rekap && rekap.hari && rekap.hari[hariKe] && rekap.hari[hariKe].items) {
+                const its = rekap.hari[hariKe].items;
+                if(its[0]) itemJaya1 = {storting: parseAngka(its[0].storting), drop: parseAngka(its[0].drop)};
+                if(its[1]) itemJaya2 = {storting: parseAngka(its[1].storting), drop: parseAngka(its[1].drop)};
+                if(its[2]) itemJaya3 = {storting: parseAngka(its[2].storting), drop: parseAngka(its[2].drop)};
             }
-            let totalDropHariIni = parseAngka(itemJaya1.drop) + parseAngka(itemJaya2.drop) + parseAngka(itemJaya3.drop);
+            
+            let totalStortingHariIni = itemJaya1.storting + itemJaya2.storting + itemJaya3.storting;
+            let totalDropHariIni = itemJaya1.drop + itemJaya2.drop + itemJaya3.drop;
 
+            // Rincian Pengeluaran Teks
             let expText = "";
             if(listPengeluaran.length > 0) {
                 listPengeluaran.forEach(p => {
-                    if(p.keterangan || p.jumlah) {
-                        expText += `    - ${p.keterangan || 'Lain-lain'}: Rp ${angka(p.jumlah)}\n`;
-                    }
+                    expText += `    -${p.keterangan || 'Lain-lain'}: Rp ${angka(p.jumlah)}\n`;
                 });
             }
-            if(!expText) expText = "    - (Tidak ada pengeluaran)\n";
+            if(!expText) expText = "    -(Tidak ada pengeluaran)\n";
 
             let kmjKasVal = parseAngka(latestExp()?.saldoKasAkhir) + staffTotal("simp") - staffTotal("bon");
 
             // Susun Format Pesan WhatsApp
             let pesan = `*KOPERASI MITRA JAYA (KMJ)*\n` +
                         `_Laporan Rekap Harian & Kas_\n` +
-                        `📅 *Tanggal:* ${today}\n\n` +
+                        `📅 *Tanggal:* ${displayTgl}\n\n` +
                         `*1. Rekapitulasi Resort:*\n` +
                         `* Jaya 1 - Storting: Rp ${angka(itemJaya1.storting)} | Drop: Rp ${angka(itemJaya1.drop)}\n` +
                         `* Jaya 2 - Storting: Rp ${angka(itemJaya2.storting)} | Drop: Rp ${angka(itemJaya2.drop)}\n` +
                         `* Jaya 3 - Storting: Rp ${angka(itemJaya3.storting)} | Drop: Rp ${angka(itemJaya3.drop)}\n` +
+                        `total storting hari ini Rp ${angka(totalStortingHariIni)}\n` +
                         `👉 *Total Drop Hari Ini:* Rp ${angka(totalDropHariIni)}\n\n` +
                         `*2. Posisi Kas & Ekspedisi:*\n` +
                         `* Kas Masuk: Rp ${angka(kasMasuk)}\n` +
@@ -667,7 +683,7 @@
                         expText +
                         `  _Total Pengeluaran: Rp ${angka(totalPengeluaran)}_\n` +
                         `* Tunai Pasar: Rp ${angka(tunaiPasar)}\n` +
-                        `👉 *Saldo Kas Akhir:* Rp ${angka(saldoKasAkhir)}\n\n` +
+                        `👉 *Saldo Kas:* Rp ${angka(saldoKasAkhir)}\n\n` +
                         `*3. Saldo Fisik Pegangan Kas:*\n` +
                         `💼 *KMJ KAS:* Rp ${angka(kmjKasVal)}\n\n` +
                         `_(Laporan dihasilkan otomatis oleh Sistem KMJ)_`;
@@ -675,7 +691,6 @@
             const encoded = encodeURIComponent(pesan);
             window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
         }
-
 
         // --- RENDER GRAFIK DASHBOARD CUSTOM ---
         let pieChartInstance = null;
