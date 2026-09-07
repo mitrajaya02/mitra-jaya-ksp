@@ -77,7 +77,7 @@
         .page-head p{margin:0;color:#667085}
 
 
-        .toolbar{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end}
+        .toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
         .info{background:#e8f5e9;border-left:4px solid var(--g);padding:11px;border-radius:8px;margin-top:13px;color:#1b5e20}
 
 
@@ -347,6 +347,25 @@
         function updateSaveButton(){
             const btn=document.querySelector(".save-bar button");
             if(!btn)return;
+            
+            // Jika di Dashboard (kmjPage === ""), ubah tombol bawah menjadi Kirim Laporan WA
+            if(kmjPage === "") {
+                btn.textContent = "Kirim Laporan WA";
+                btn.className = "btn-wa";
+                btn.style.background = "var(--wa)";
+                btn.style.color = "#fff";
+                btn.onclick = kirimLaporanWA;
+                btn.title = "Kirim Laporan via WhatsApp";
+                return;
+            } else {
+                btn.textContent = "Simpan";
+                btn.className = "";
+                btn.style.background = "";
+                btn.style.color = "";
+                btn.onclick = simpanHalamanAktif;
+            }
+
+
             const aktif=!!kmjPage&&tanggalHariIniAda();
             btn.classList.toggle("save-disabled",!aktif);
             btn.setAttribute("aria-disabled",String(!aktif));
@@ -538,28 +557,15 @@
 
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         function kirimLaporanWA() {
-            const b = +bulan.value, t = +tahun.value;
+            const n = new Date();
+            const b = n.getMonth() + 1;
+            const t = n.getFullYear();
             const rekap = ambilDataRekap(b, t);
             const ekspedisi = ambilDataEkspedisi(b, t);
             const today = tanggalHariIni();
             
-            let tglKey = null;
-            let hariKe = null;
-            
-            for(let h=1; h<=jumlahHari(b,t); h++) {
-                const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
-                if(dtStr === today) {
-                    tglKey = today;
-                    hariKe = h;
-                    break;
-                }
-            }
-
-
-            if(!hariKe) {
-                alert("Tanggal hari ini (" + today + ") belum dibuat/disimpan di Rekap Harian untuk dilaporkan.");
-                return;
-            }
+            let tglKey = today;
+            let hariKe = n.getDate();
 
 
             // Ambil data rekap hari ini
@@ -588,7 +594,6 @@
             totalPengeluaran = listPengeluaran.reduce((s, x) => s + parseAngka(x.jumlah), 0);
             
             let saldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
-            // Hitung kumulatif sampai hari ini jika perlu, atau ambil langsung kalkulasi ekspedisi
             let sementara = saldoAwal + kasMasuk - totalPengeluaran;
             saldoKasAkhir = sementara - tunaiPasar;
 
@@ -898,7 +903,6 @@
                     <input id="tahun" type="number" onchange="gantiPeriode()">
                 </div>
                 <button class="btn-secondary" onclick="cetakRekap()">Cetak</button>
-                <button class="btn-wa" onclick="kirimLaporanWA()">📲 Kirim WA</button>
             </div>
             <div class="info"><b>Petunjuk:</b> Tekan <b>TANGGAL</b> untuk membuat tanggal hari ini. Satu tanggal hanya boleh dibuat satu kali dalam sehari. Isi hanya Storting, Drop, dan Tabungan Keluar.</div>
         </div>
@@ -931,7 +935,6 @@
                     <input id="ekspedisiTahun" type="number" onchange="buatEkspedisi()">
                 </div>
                 <button class="btn-secondary" onclick="window.print()">Cetak</button>
-                <button class="btn-wa" onclick="kirimLaporanWA()">📲 Kirim WA</button>
             </div>
             <div class="info"><b>Petunjuk:</b> Tekan <b>TANGGAL</b> untuk membuat tanggal hari ini. Satu tanggal hanya boleh dibuat satu kali dalam sehari. Kas masuk dan Tunai Pasar mengikuti Buku Rekap.</div>
         </div>
