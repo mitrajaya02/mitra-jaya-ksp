@@ -557,76 +557,88 @@
 
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
+        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         function kirimLaporanWA() {
             const b = +bulan.value, t = +tahun.value;
             const rekap = ambilDataRekap(b, t);
             const ekspedisi = ambilDataEkspedisi(b, t);
             const today = tanggalHariIni();
             
-            let tglKey = null;
             let hariKe = null;
             
-            // Cari baris mana di bulan ini yang tanggalnya sama dengan hari ini (today)
+            // Cari baris mana di bulan ini yang tanggalnya sama dengan hari ini
             for(let h=1; h<=jumlahHari(b,t); h++) {
                 const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
                 if(dtStr === today) {
-                    tglKey = today;
                     hariKe = h;
                     break;
                 }
             }
 
-            // Jika tanggal hari ini belum di-set di tabel rekap, gunakan tanggal hari ini secara default tapi ambil baris aktif/pertama yang ada isinya
             if(!hariKe) {
-                tglKey = today;
-                // Cari baris pertama yang tanggalnya terisi
                 for(let h=1; h<=jumlahHari(b,t); h++) {
-                    const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
-                    if(dtStr) {
+                    if(document.getElementById(`tanggal-${t}-${b}-${h}`)?.value) {
                         hariKe = h;
-                        tglKey = dtStr;
                         break;
                     }
                 }
             }
+            if(!hariKe) hariKe = new Date().getDate();
 
-            if(!hariKe) {
-                hariKe = new Date().getDate(); // Fallback ke tanggal sistem jika kosong
+            // Hitung akumulasi saldo kas secara berurutan sampai hari ke-h (menyamakan hitungEkspedisi)
+            let currentSaldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
+            let kasMasuk = 0, tunaiPasar = 0, listPengeluaran = [], totalPengeluaran = 0, saldoKasAkhir = 0;
+
+            for(let h=1; h<=jumlahHari(b,t); h++) {
+                const k = `${t}-${b}-${h}`;
+                let rows = document.querySelectorAll("#exp-list-"+k+" .exp-expense-row");
+                let pe = 0;
+                rows.forEach(r => {
+                    let jmlInp = r.querySelector('input[inputmode="numeric"]');
+                    if(jmlInp) pe += parseAngka(jmlInp.value);
+                });
+
+                let km = ambilKasMasukRekap(h, b, t);
+                let tp = ambilTunaiPasarRekap(h, b, t);
+                let sementara = currentSaldoAwal + km - pe;
+                let akhir = sementara - tp;
+
+                if(h === hariKe) {
+                    kasMasuk = km;
+                    tunaiPasar = tp;
+                    totalPengeluaran = pe;
+                    saldoKasAkhir = akhir;
+                    
+                    if(ekspedisi && ekspedisi.hari && ekspedisi.hari[h] && ekspedisi.hari[h].pengeluaran) {
+                        listPengeluaran = ekspedisi.hari[h].pengeluaran;
+                    } else {
+                        rows.forEach(r => {
+                            let ketInp = r.querySelector('input[type="text"]');
+                            let jmlInp = r.querySelector('input[inputmode="numeric"]');
+                            if(ketInp || jmlInp) {
+                                listPengeluaran.push({keterangan: ketInp ? ketInp.value : '', jumlah: jmlInp ? parseAngka(jmlInp.value) : 0});
+                            }
+                        });
+                    }
+                    break;
+                }
+                currentSaldoAwal = akhir;
             }
 
-            // Ambil data rekap berdasarkan baris hari yang tepat
+            // Ambil data rekap resort hari ini
             let itemJaya1 = {storting: 0, drop: 0}, itemJaya2 = {storting: 0, drop: 0}, itemJaya3 = {storting: 0, drop: 0};
-            let totalDropHariIni = 0;
-            
             if(rekap && rekap.hari && rekap.hari[hariKe] && rekap.hari[hariKe].items) {
                 const its = rekap.hari[hariKe].items;
                 if(its[0]) itemJaya1 = its[0];
                 if(its[1]) itemJaya2 = its[1];
                 if(its[2]) itemJaya3 = its[2];
             } else {
-                // Coba ambil langsung dari input HTML yang sedang aktif di layar jika rekap object belum tersimpan
                 const kBase = `${t}-${b}-${hariKe}`;
                 itemJaya1 = {storting: nilai(`storting-${kBase}-0`), drop: nilai(`drop-${kBase}-0`)};
                 itemJaya2 = {storting: nilai(`storting-${kBase}-1`), drop: nilai(`drop-${kBase}-1`)};
                 itemJaya3 = {storting: nilai(`storting-${kBase}-2`), drop: nilai(`drop-${kBase}-2`)};
             }
-            totalDropHariIni = parseAngka(itemJaya1.drop) + parseAngka(itemJaya2.drop) + parseAngka(itemJaya3.drop);
-
-            // Ambil data ekspedisi hari ini
-            let kasMasuk = ambilKasMasukRekap(hariKe, b, t);
-            let tunaiPasar = ambilTunaiPasarRekap(hariKe, b, t);
-            let listPengeluaran = [];
-            let totalPengeluaran = 0;
-            let saldoKasAkhir = 0;
-
-            if(ekspedisi && ekspedisi.hari && ekspedisi.hari[hariKe]) {
-                listPengeluaran = ekspedisi.hari[hariKe].pengeluaran || [];
-            }
-            totalPengeluaran = listPengeluaran.reduce((s, x) => s + parseAngka(x.jumlah), 0);
-            
-            let saldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
-            let sementara = saldoAwal + kasMasuk - totalPengeluaran;
-            saldoKasAkhir = sementara - tunaiPasar;
+            let totalDropHariIni = parseAngka(itemJaya1.drop) + parseAngka(itemJaya2.drop) + parseAngka(itemJaya3.drop);
 
             let expText = "";
             if(listPengeluaran.length > 0) {
@@ -643,7 +655,7 @@
             // Susun Format Pesan WhatsApp
             let pesan = `*KOPERASI MITRA JAYA (KMJ)*\n` +
                         `_Laporan Rekap Harian & Kas_\n` +
-                        `📅 *Tanggal:* ${tglKey}\n\n` +
+                        `📅 *Tanggal:* ${today}\n\n` +
                         `*1. Rekapitulasi Resort:*\n` +
                         `* Jaya 1 - Storting: Rp ${angka(itemJaya1.storting)} | Drop: Rp ${angka(itemJaya1.drop)}\n` +
                         `* Jaya 2 - Storting: Rp ${angka(itemJaya2.storting)} | Drop: Rp ${angka(itemJaya2.drop)}\n` +
