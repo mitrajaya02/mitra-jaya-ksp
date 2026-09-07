@@ -556,29 +556,61 @@
 
 
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
+        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         function kirimLaporanWA() {
-            const n = new Date();
-            const b = n.getMonth() + 1;
-            const t = n.getFullYear();
+            const b = +bulan.value, t = +tahun.value;
             const rekap = ambilDataRekap(b, t);
             const ekspedisi = ambilDataEkspedisi(b, t);
             const today = tanggalHariIni();
             
-            let tglKey = today;
-            let hariKe = n.getDate();
+            let tglKey = null;
+            let hariKe = null;
+            
+            // Cari baris mana di bulan ini yang tanggalnya sama dengan hari ini (today)
+            for(let h=1; h<=jumlahHari(b,t); h++) {
+                const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
+                if(dtStr === today) {
+                    tglKey = today;
+                    hariKe = h;
+                    break;
+                }
+            }
 
+            // Jika tanggal hari ini belum di-set di tabel rekap, gunakan tanggal hari ini secara default tapi ambil baris aktif/pertama yang ada isinya
+            if(!hariKe) {
+                tglKey = today;
+                // Cari baris pertama yang tanggalnya terisi
+                for(let h=1; h<=jumlahHari(b,t); h++) {
+                    const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
+                    if(dtStr) {
+                        hariKe = h;
+                        tglKey = dtStr;
+                        break;
+                    }
+                }
+            }
 
-            // Ambil data rekap hari ini
+            if(!hariKe) {
+                hariKe = new Date().getDate(); // Fallback ke tanggal sistem jika kosong
+            }
+
+            // Ambil data rekap berdasarkan baris hari yang tepat
             let itemJaya1 = {storting: 0, drop: 0}, itemJaya2 = {storting: 0, drop: 0}, itemJaya3 = {storting: 0, drop: 0};
             let totalDropHariIni = 0;
+            
             if(rekap && rekap.hari && rekap.hari[hariKe] && rekap.hari[hariKe].items) {
                 const its = rekap.hari[hariKe].items;
                 if(its[0]) itemJaya1 = its[0];
                 if(its[1]) itemJaya2 = its[1];
                 if(its[2]) itemJaya3 = its[2];
+            } else {
+                // Coba ambil langsung dari input HTML yang sedang aktif di layar jika rekap object belum tersimpan
+                const kBase = `${t}-${b}-${hariKe}`;
+                itemJaya1 = {storting: nilai(`storting-${kBase}-0`), drop: nilai(`drop-${kBase}-0`)};
+                itemJaya2 = {storting: nilai(`storting-${kBase}-1`), drop: nilai(`drop-${kBase}-1`)};
+                itemJaya3 = {storting: nilai(`storting-${kBase}-2`), drop: nilai(`drop-${kBase}-2`)};
             }
             totalDropHariIni = parseAngka(itemJaya1.drop) + parseAngka(itemJaya2.drop) + parseAngka(itemJaya3.drop);
-
 
             // Ambil data ekspedisi hari ini
             let kasMasuk = ambilKasMasukRekap(hariKe, b, t);
@@ -586,7 +618,6 @@
             let listPengeluaran = [];
             let totalPengeluaran = 0;
             let saldoKasAkhir = 0;
-
 
             if(ekspedisi && ekspedisi.hari && ekspedisi.hari[hariKe]) {
                 listPengeluaran = ekspedisi.hari[hariKe].pengeluaran || [];
@@ -596,7 +627,6 @@
             let saldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
             let sementara = saldoAwal + kasMasuk - totalPengeluaran;
             saldoKasAkhir = sementara - tunaiPasar;
-
 
             let expText = "";
             if(listPengeluaran.length > 0) {
@@ -608,9 +638,7 @@
             }
             if(!expText) expText = "    - (Tidak ada pengeluaran)\n";
 
-
             let kmjKasVal = parseAngka(latestExp()?.saldoKasAkhir) + staffTotal("simp") - staffTotal("bon");
-
 
             // Susun Format Pesan WhatsApp
             let pesan = `*KOPERASI MITRA JAYA (KMJ)*\n` +
@@ -631,7 +659,6 @@
                         `*3. Saldo Fisik Pegangan Kas:*\n` +
                         `💼 *KMJ KAS:* Rp ${angka(kmjKasVal)}\n\n` +
                         `_(Laporan dihasilkan otomatis oleh Sistem KMJ)_`;
-
 
             const encoded = encodeURIComponent(pesan);
             window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
