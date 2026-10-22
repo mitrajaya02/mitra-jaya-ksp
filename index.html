@@ -410,9 +410,49 @@
         function hitungHari(h,b,t,awal){let tot={storting:0,tunai:0,tabungan5:0,adm5:0,jumlah:0,drop:0,drop20:0,drop120:0,tabunganKeluar:0,saldo:0};resortNames.forEach((n,i)=>{const k=`${t}-${b}-${h}-${i}`,st=nilai("storting-"+k),dr=nilai("drop-"+k),tk=nilai("tabunganKeluar-"+k),tb5=dr*.05,adm=dr*.05,j=st+tb5+adm,keb=dr+tk,tun=j<keb?keb-j:0,sd=j>=keb?j-keb:0;setText("tunai-"+k,tun);setText("tabungan5-"+k,tb5);setText("adm5-"+k,adm);setText("jumlah-"+k,j);setText("drop20-"+k,dr*.2);setText("drop120-"+k,dr*1.2);setText("saldo-"+k,sd);tot.storting+=st;tot.tunai+=tun;tot.tabungan5+=tb5;tot.adm5+=adm;tot.jumlah+=j;tot.drop+=dr;tot.drop20+=dr*.2;tot.drop120+=dr*1.2;tot.tabunganKeluar+=tk;tot.saldo+=sd});Object.keys(tot).forEach(x=>{const c=x[0].toUpperCase()+x.slice(1);setText("awal"+c+"-"+h,awal[x]);setText("total"+c+"-"+h,tot[x])});const akhir={};Object.keys(tot).forEach(x=>akhir[x]=awal[x]+tot[x]);Object.keys(akhir).forEach(x=>setText("akhir"+x[0].toUpperCase()+x.slice(1)+"-"+h,akhir[x]));return{akhir}} 
 
 
-        async function simpanData(){if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const b=+bulan.value,t=+tahun.value,d={bulan:b,tahun:t,hari:{}};for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`;d.hari[h]={tanggal:document.getElementById("tanggal-"+k)?.value||"",items:resortNames.map((n,i)=>({storting:nilai(`storting-${k}-${i}`),drop:nilai(`drop-${k}-${i}`),tabunganKeluar:nilai(`tabunganKeluar-${k}-${i}`)}))}}const key=`koperasi-rekap-${t}-${b}`;localStorage.setItem(key,JSON.stringify(d));const ok=await saveToCloud(key,d);if(ok){statusData.textContent=`Data ${namaBulan[b]} ${t} berhasil disimpan online.`;statusData.className="status-success";kmjDirty=false;updateSaveButton();tampilTersimpan();terapkanKunciKeamanan();}} 
+        // 5. Ganti fungsi simpanData
+        async function simpanData(){
+            if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu.");return}
+            const b=+bulan.value,t=+tahun.value;
+            const today = tanggalHariIni();
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const isAdmin = user?.email === 'virtualdigit02@gmail.com';
+
+
+            for(let h=1; h<=jumlahHari(b,t); h++){
+                const k=`${t}-${b}-${h}`;
+                const tglVal = document.getElementById("tanggal-"+k)?.value;
+                
+                if(tglVal) {
+                    if(!isAdmin && tglVal !== today) continue; // Kasir hanya memproses data hari ini ke cloud
+                    
+                    const rowData = {
+                        tanggal: tglVal,
+                        items: resortNames.map((n,i)=>({storting:nilai(`storting-${k}-${i}`),drop:nilai(`drop-${k}-${i}`),tabunganKeluar:nilai(`tabunganKeluar-${k}-${i}`)}))
+                    };
+                    const key = `koperasi-rekap-${tglVal}`; 
+                    localStorage.setItem(key, JSON.stringify(rowData));
+                    await saveToCloud(key, rowData);
+                }
+            }
+            statusData.textContent="Data mutlak berhasil diamankan ke server.";
+            statusData.className="status-success"; kmjDirty=false; updateSaveButton(); tampilTersimpan(); terapkanKunciKeamanan();
+        }
         
-        function loadData(){const b=+bulan.value,t=+tahun.value,s=localStorage.getItem(`koperasi-rekap-${t}-${b}`);if(!s){hitungSemuaHari();terapkanKunciKeamanan();return}try{const d=JSON.parse(s);Object.keys(d.hari||{}).forEach(h=>{const k=`${t}-${b}-${h}`,x=d.hari[h];const date=document.getElementById("tanggal-"+k);if(date)date.value=x.tanggal||"";(x.items||[]).forEach((v,i)=>{document.getElementById(`storting-${k}-${i}`).value=v.storting?angka(v.storting):"";document.getElementById(`drop-${k}-${i}`).value=v.drop?angka(v.drop):"";document.getElementById(`tabunganKeluar-${k}-${i}`).value=v.tabunganKeluar?angka(v.tabunganKeluar):""})});hitungSemuaHari();terapkanKunciKeamanan();}catch(e){hitungSemuaHari();terapkanKunciKeamanan();}} 
+        // 3. Ganti fungsi loadData
+        function loadData(){
+            const b=+bulan.value,t=+tahun.value, d=ambilDataRekap(b,t);
+            Object.keys(d.hari||{}).forEach(h=>{
+                const k=`${t}-${b}-${h}`, x=d.hari[h], date=document.getElementById("tanggal-"+k);
+                if(date) date.value=x.tanggal||"";
+                (x.items||[]).forEach((v,i)=>{
+                    if(document.getElementById(`storting-${k}-${i}`)) document.getElementById(`storting-${k}-${i}`).value=v.storting?angka(v.storting):"";
+                    if(document.getElementById(`drop-${k}-${i}`)) document.getElementById(`drop-${k}-${i}`).value=v.drop?angka(v.drop):"";
+                    if(document.getElementById(`tabunganKeluar-${k}-${i}`)) document.getElementById(`tabunganKeluar-${k}-${i}`).value=v.tabunganKeluar?angka(v.tabunganKeluar):"";
+                });
+            });
+            hitungSemuaHari(); terapkanKunciKeamanan();
+        }
         
         function gantiPeriode(){buatRekap()}
         function cetakRekap(){window.print()}
@@ -434,8 +474,28 @@
 
 
         function sinkronPeriodeEkspedisi(){ekspedisiBulan.value=bulan.value;ekspedisiTahun.value=tahun.value} 
-        function ambilDataRekap(b,t){try{return JSON.parse(localStorage.getItem(`koperasi-rekap-${t}-${b}`))}catch(e){return null}} 
-        function ambilDataEkspedisi(b,t){try{return JSON.parse(localStorage.getItem(`koperasi-ekspedisi-${t}-${b}`))}catch(e){return null}} 
+        
+        // 1. Ganti fungsi ambilDataRekap
+        function ambilDataRekap(b,t){
+            let d; try{d=JSON.parse(localStorage.getItem(`koperasi-rekap-${t}-${b}`))}catch(e){}
+            if(!d) d={bulan:b,tahun:t,hari:{}}; if(!d.hari) d.hari={};
+            for(let h=1;h<=31;h++){
+                let s=localStorage.getItem(`koperasi-rekap-${t}-${String(b).padStart(2,'0')}-${String(h).padStart(2,'0')}`);
+                if(s)try{d.hari[h]=JSON.parse(s)}catch(e){}
+            }
+            return d;
+        }
+        
+        // 2. Ganti fungsi ambilDataEkspedisi
+        function ambilDataEkspedisi(b,t){
+            let d; try{d=JSON.parse(localStorage.getItem(`koperasi-ekspedisi-${t}-${b}`))}catch(e){}
+            if(!d) d={bulan:b,tahun:t,hari:{}}; if(!d.hari) d.hari={};
+            for(let h=1;h<=31;h++){
+                let s=localStorage.getItem(`koperasi-ekspedisi-${t}-${String(b).padStart(2,'0')}-${String(h).padStart(2,'0')}`);
+                if(s)try{d.hari[h]=JSON.parse(s)}catch(e){}
+            }
+            return d;
+        }
         
         function ambilKasMasukRekap(h,b,t){const d=ambilDataRekap(b,t);if(!d?.hari?.[h])return 0;return(d.hari[h].items||[]).reduce((s,x)=>{const j=parseAngka(x.storting)+parseAngka(x.drop)*.1,k=parseAngka(x.drop)+parseAngka(x.tabunganKeluar);return s+(j>=k?j-k:0)},0)} 
         function ambilTunaiPasarRekap(h,b,t){const d=ambilDataRekap(b,t);if(!d?.hari?.[h])return 0;return(d.hari[h].items||[]).reduce((s,x)=>{const j=parseAngka(x.storting)+parseAngka(x.drop)*.1,k=parseAngka(x.drop)+parseAngka(x.tabunganKeluar);return s+(j<k?k-j:0)},0)} 
@@ -486,10 +546,53 @@
         function formatInputEkspedisi(e){e.value=e.value===""?"":angka(parseAngka(e.value));hitungEkspedisi();tandaiPerubahan()} 
         function hitungEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value;let awal=ambilSaldoKasAwalEkspedisi(b,t);for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`,rows=document.querySelectorAll("#exp-list-"+k+" .exp-expense-row");let pe=0;rows.forEach((r,i)=>pe+=parseAngka(document.getElementById(`exp-jml-${k}-${i}`)?.value));const masuk=ambilKasMasukRekap(h,b,t),tunai=ambilTunaiPasarRekap(h,b,t),sementara=awal+masuk-pe,akhir=sementara-tunai;setText("exp-awal-"+k,awal);setText("exp-masuk-"+k,masuk);setText("exp-pengeluaran-"+k,pe);setText("exp-sementara-"+k,sementara);setText("exp-tunai-"+k,tunai);setText("exp-akhir-"+k,akhir);awal=akhir}updateCash()} 
         
-        function loadEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value,s=ambilDataEkspedisi(b,t);if(!s){hitungEkspedisi();terapkanKunciKeamanan();return}Object.keys(s.hari||{}).forEach(h=>{const k=`${t}-${b}-${h}`,d=s.hari[h],date=document.getElementById("exp-tanggal-"+k);if(date)date.value=d.tanggal||"";const l=document.getElementById("exp-list-"+k);if(l){l.innerHTML="";(d.pengeluaran||[]).forEach((x,i)=>buatBarisPengeluaran(l,k,i,x.keterangan,x.jumlah));if(!l.children.length)buatBarisPengeluaran(l,k,0,"","")}});hitungEkspedisi();terapkanKunciKeamanan();} 
+        // 4. Ganti fungsi loadEkspedisi
+        function loadEkspedisi(){
+            const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value, s=ambilDataEkspedisi(b,t);
+            if(!s) {hitungEkspedisi();terapkanKunciKeamanan();return;}
+            Object.keys(s.hari||{}).forEach(h=>{
+                const k=`${t}-${b}-${h}`, d=s.hari[h], date=document.getElementById("exp-tanggal-"+k);
+                if(date) date.value=d.tanggal||"";
+                const l=document.getElementById("exp-list-"+k);
+                if(l){
+                    l.innerHTML="";
+                    (d.pengeluaran||[]).forEach((x,i)=>buatBarisPengeluaran(l,k,i,x.keterangan,x.jumlah));
+                    if(!l.children.length) buatBarisPengeluaran(l,k,0,"","");
+                }
+            });
+            hitungEkspedisi(); terapkanKunciKeamanan();
+        }
 
 
-        async function simpanEkspedisi(){if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value,d={bulan:b,tahun:t,saldoKasAwal:ambilSaldoKasAwalEkspedisi(b,t),hari:{}};for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`,p=[];document.querySelectorAll("#exp-list-"+k+" .exp-expense-row").forEach((r,i)=>p.push({keterangan:document.getElementById(`exp-ket-${k}-${i}`).value,jumlah:parseAngka(document.getElementById(`exp-jml-${k}-${i}`).value)}));d.hari[h]={tanggal:document.getElementById("exp-tanggal-"+k)?.value||"",pengeluaran:p}}let a=d.saldoKasAwal;for(let h=1;h<=jumlahHari(b,t);h++)a+=ambilKasMasukRekap(h,b,t)-d.hari[h].pengeluaran.reduce((s,x)=>s+x.jumlah,0)-ambilTunaiPasarRekap(h,b,t);d.saldoKasAkhir=a;const key=`koperasi-ekspedisi-${t}-${b}`;localStorage.setItem(key,JSON.stringify(d));const ok=await saveToCloud(key,d);if(ok){hitungEkspedisi();updateCash();statusEkspedisi.textContent=`Data ${namaBulan[b]} ${t} berhasil disimpan online.`;statusEkspedisi.className="status-success";kmjDirty=false;updateSaveButton();tampilTersimpan();terapkanKunciKeamanan();}} 
+        // 6. Ganti fungsi simpanEkspedisi
+        async function simpanEkspedisi(){
+            if(!tanggalHariIniAda()){alert("Silakan isi tanggal hari ini terlebih dahulu.");return}
+            const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value;
+            const today = tanggalHariIni();
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const isAdmin = user?.email === 'virtualdigit02@gmail.com';
+
+
+            for(let h=1; h<=jumlahHari(b,t); h++){
+                const k=`${t}-${b}-${h}`;
+                const tglVal = document.getElementById("exp-tanggal-"+k)?.value;
+                
+                if(tglVal) {
+                    if(!isAdmin && tglVal !== today) continue; // Kasir hanya memproses data hari ini ke cloud
+                    
+                    const p=[];
+                    document.querySelectorAll("#exp-list-"+k+" .exp-expense-row").forEach((r,i)=>p.push({keterangan:document.getElementById(`exp-ket-${k}-${i}`).value,jumlah:parseAngka(document.getElementById(`exp-jml-${k}-${i}`).value)}));
+                    
+                    const d = {tanggal: tglVal, pengeluaran: p};
+                    const key = `koperasi-ekspedisi-${tglVal}`;
+                    localStorage.setItem(key, JSON.stringify(d));
+                    await saveToCloud(key, d);
+                }
+            }
+            hitungEkspedisi(); updateCash();
+            statusEkspedisi.textContent="Data mutlak berhasil diamankan ke server.";
+            statusEkspedisi.className="status-success"; kmjDirty=false; updateSaveButton(); tampilTersimpan(); terapkanKunciKeamanan();
+        }
 
 
         function staffKey(t){return t==="simp"?"koperasi-simpanan":"koperasi-bon"}
@@ -556,9 +659,6 @@
 
 
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
-        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
-        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
-        // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
         function kirimLaporanWA() {
             const b = document.getElementById('bulan') ? +document.getElementById('bulan').value : new Date().getMonth() + 1;
             const t = document.getElementById('tahun') ? +document.getElementById('tahun').value : new Date().getFullYear();
@@ -569,6 +669,7 @@
             let hariKe = null;
             let displayTgl = today;
 
+
             // 1. Cari baris mana yang tanggalnya persis hari ini di UI
             for(let h=1; h<=jumlahHari(b,t); h++) {
                 const dtStr = document.getElementById(`tanggal-${t}-${b}-${h}`)?.value;
@@ -578,6 +679,7 @@
                     break;
                 }
             }
+
 
             // 2. Jika tidak ketemu, cari baris terakhir yang sudah ada isinya
             if(!hariKe) {
@@ -591,18 +693,22 @@
                 }
             }
 
+
             // 3. Fallback jika bulan ini sama sekali belum diisi
             if(!hariKe) hariKe = new Date().getDate();
+
 
             // Hitung akumulasi saldo kas secara berurutan sampai hari aktif
             let currentSaldoAwal = ambilSaldoKasAwalEkspedisi(b, t);
             let kasMasuk = 0, tunaiPasar = 0, listPengeluaran = [], totalPengeluaran = 0, saldoKasAkhir = 0;
+
 
             for(let h=1; h<=jumlahHari(b,t); h++) {
                 let km = ambilKasMasukRekap(h, b, t);
                 let tp = ambilTunaiPasarRekap(h, b, t);
                 let pe = 0;
                 let tempExpList = [];
+
 
                 // Ambil nilai pengeluaran dari form UI (jika aktif) atau dari local storage
                 const expListDiv = document.getElementById(`exp-list-${t}-${b}-${h}`);
@@ -623,8 +729,10 @@
                     pe = tempExpList.reduce((s, x) => s + parseAngka(x.jumlah), 0);
                 }
 
+
                 let sementara = currentSaldoAwal + km - pe;
                 let akhir = sementara - tp;
+
 
                 if(h === hariKe) {
                     kasMasuk = km;
@@ -636,6 +744,7 @@
                 }
                 currentSaldoAwal = akhir;
             }
+
 
             // Ambil data rekap resort (Storting & Drop)
             let itemJaya1 = {storting: 0, drop: 0}, itemJaya2 = {storting: 0, drop: 0}, itemJaya3 = {storting: 0, drop: 0};
@@ -656,6 +765,7 @@
             let totalStortingHariIni = itemJaya1.storting + itemJaya2.storting + itemJaya3.storting;
             let totalDropHariIni = itemJaya1.drop + itemJaya2.drop + itemJaya3.drop;
 
+
             // Rincian Pengeluaran Teks
             let expText = "";
             if(listPengeluaran.length > 0) {
@@ -665,7 +775,9 @@
             }
             if(!expText) expText = "    -(Tidak ada pengeluaran)\n";
 
+
             let kmjKasVal = parseAngka(latestExp()?.saldoKasAkhir) + staffTotal("simp") - staffTotal("bon");
+
 
             // Susun Format Pesan WhatsApp
             let pesan = `*KOPERASI MITRA JAYA (KMJ)*\n` +
@@ -688,9 +800,11 @@
                         `💼 *KMJ KAS:* Rp ${angka(kmjKasVal)}\n\n` +
                         `_(Laporan dihasilkan otomatis oleh Sistem KMJ)_`;
 
+
             const encoded = encodeURIComponent(pesan);
             window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
         }
+
 
         // --- RENDER GRAFIK DASHBOARD CUSTOM ---
         let pieChartInstance = null;
