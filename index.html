@@ -246,16 +246,29 @@
         const PIN_KASIR = "123456"; 
         
         function terapkanKunciKeamanan() {
+            const today = tanggalHariIni();
             const semuaInput = document.querySelectorAll('.rekap-table input, .exp-table input[type="text"], .exp-table input[inputmode="numeric"], .staff input.money, .staff input.name-input');
             semuaInput.forEach(inp => {
-                if(inp.value && inp.value !== "" && inp.value !== "0") {
+                let kunci = false;
+                
+                // 1. Kunci otomatis jika input sudah ada nilainya
+                if(inp.value && inp.value !== "" && inp.value !== "0") kunci = true;
+                
+                // 2. KHUSUS BUKU SIMPANAN & BON: Kunci mutlak jika kolom tanggalnya BUKAN hari ini
+                if(inp.classList.contains('money') && inp.dataset.d && inp.dataset.d !== today) kunci = true;
+                
+                // 3. KHUSUS NAMA PETUGAS: Kunci agar tidak bisa asal ubah nama
+                if(inp.classList.contains('name-input') && inp.value !== "") kunci = true;
+
+
+                if(kunci) {
                     inp.setAttribute('readonly', 'true');
                     inp.classList.add('terkunci');
                     
                     const handlePinPrompt = function(e) {
                         if(this.hasAttribute('readonly')) {
                             this.blur(); 
-                            const pin = prompt("Data sudah tersimpan di cloud. Masukkan PIN Admin untuk mengedit:");
+                            const pin = prompt("Bagian ini dikunci mutlak. Masukkan PIN Admin untuk mengedit:");
                             if(pin === PIN_KASIR) {
                                 this.removeAttribute('readonly');
                                 this.classList.remove('terkunci');
@@ -644,7 +657,59 @@
         
         function calcStaff(t,refresh=true){const d=staffData(t);let g=0;d.names.forEach((_,r)=>{let s=0;d.dates.forEach(dt=>s+=parseAngka(d.v[r+"|"+dt]));setText(`sr-${t}-${r}`,s);g+=s});d.dates.forEach(dt=>{let s=0;d.names.forEach((_,r)=>s+=parseAngka(d.v[r+"|"+dt]));setText(`sc-${t}-${dt}`,s)});setText("sg-"+t,g);if(refresh)updateCash()} 
         
-        async function saveStaff(t){if(!tanggalHariIniAda()){alert("Silakan tambahkan tanggal hari ini terlebih dahulu sebelum menyimpan.");return}const ok=await saveStaffData(t,staffData(t));if(ok){const e=document.getElementById(t==="simp"?"simpStatus":"bonStatus");e.textContent="Data berhasil disimpan online.";e.className="status-success";kmjDirty=false;updateSaveButton();updateCash();tampilTersimpan();terapkanKunciKeamanan();}} 
+        async function saveStaff(t){
+            if(!tanggalHariIniAda()){alert("Silakan tambahkan tanggal hari ini terlebih dahulu sebelum menyimpan.");return}
+            
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const isAdmin = user?.email === 'virtualdigit02@gmail.com';
+            const today = tanggalHariIni();
+            const dBaru = staffData(t);
+
+
+            // --- SISTEM VALIDASI KASIR UNTUK BUKU SIMPANAN & BON ---
+            if(!isAdmin) {
+                let dLama = null;
+                try { dLama = JSON.parse(localStorage.getItem(staffKey(t))); } catch(e){}
+                if(!dLama) dLama = {v:{}, names:[], dates:[]};
+                
+                let terdeteksiKecurangan = false;
+                
+                // 1. Cek apakah kasir merubah nominal di tanggal masa lalu
+                for(const key in dLama.v) {
+                    const dt = key.split("|")[1];
+                    if(dt !== today && dLama.v[key] !== dBaru.v[key]) terdeteksiKecurangan = true;
+                }
+                
+                // 2. Cek apakah kasir menghapus kolom tanggal masa lalu
+                dLama.dates.forEach(dt => {
+                    if(dt !== today && !dBaru.dates.includes(dt)) terdeteksiKecurangan = true;
+                });
+                
+                // Jika curang, tolak simpan dan kembalikan data asli
+                if(terdeteksiKecurangan) {
+                    alert("SISTEM KEAMANAN: Kasir dilarang keras mengedit atau menghapus data tanggal kemarin!");
+                    await syncFromCloud(); // Tarik ulang data asli dari server
+                    if(t==="simp") renderStaff("simp"); else renderStaff("bon");
+                    return;
+                }
+            }
+            // --- AKHIR VALIDASI ---
+
+
+            const ok = await saveStaffData(t, dBaru);
+            if(ok){
+                const e = document.getElementById(t==="simp"?"simpStatus":"bonStatus");
+                e.textContent = "Data berhasil dikunci mutlak ke server.";
+                e.className = "status-success";
+                kmjDirty = false;
+                updateSaveButton();
+                updateCash();
+                tampilTersimpan();
+                terapkanKunciKeamanan();
+            }
+        } 
+
+
         function cetakStaff(){window.print()} 
 
 
