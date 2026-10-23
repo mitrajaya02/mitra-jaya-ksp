@@ -483,7 +483,7 @@
             statusData.className="status-success"; kmjDirty=false; updateSaveButton(); tampilTersimpan(); terapkanKunciKeamanan();
         }
         
-        function loadData(){
+function loadData(){
             const b=+bulan.value,t=+tahun.value, d=ambilDataRekap(b,t);
             Object.keys(d.hari||{}).forEach(h=>{
                 const k=`${t}-${b}-${h}`, x=d.hari[h], date=document.getElementById("tanggal-"+k);
@@ -494,6 +494,17 @@
                     if(document.getElementById(`tabunganKeluar-${k}-${i}`)) document.getElementById(`tabunganKeluar-${k}-${i}`).value=v.tabunganKeluar?angka(v.tabunganKeluar):"";
                 });
             });
+            hitungSemuaHari(); terapkanKunciKeamanan();
+            
+            // Auto-scroll langsung ke tanggal hari ini
+            setTimeout(() => {
+                const n = new Date();
+                if (+bulan.value === (n.getMonth() + 1) && +tahun.value === n.getFullYear()) {
+                    const el = document.getElementById(`tanggal-${t}-${b}-${n.getDate()}`);
+                    if (el) el.closest('.card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
             hitungSemuaHari(); terapkanKunciKeamanan();
         }
         
@@ -601,9 +612,19 @@
         function formatInputEkspedisi(e){e.value=e.value===""?"":angka(parseAngka(e.value));hitungEkspedisi();tandaiPerubahan()} 
         function hitungEkspedisi(){const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value;let awal=ambilSaldoKasAwalEkspedisi(b,t);for(let h=1;h<=jumlahHari(b,t);h++){const k=`${t}-${b}-${h}`,rows=document.querySelectorAll("#exp-list-"+k+" .exp-expense-row");let pe=0;rows.forEach((r,i)=>pe+=parseAngka(document.getElementById(`exp-jml-${k}-${i}`)?.value));const masuk=ambilKasMasukRekap(h,b,t),tunai=ambilTunaiPasarRekap(h,b,t),sementara=awal+masuk-pe,akhir=sementara-tunai;setText("exp-awal-"+k,awal);setText("exp-masuk-"+k,masuk);setText("exp-pengeluaran-"+k,pe);setText("exp-sementara-"+k,sementara);setText("exp-tunai-"+k,tunai);setText("exp-akhir-"+k,akhir);awal=akhir}updateCash()} 
         
-        function loadEkspedisi(){
+       function loadEkspedisi(){
             const b=+ekspedisiBulan.value,t=+ekspedisiTahun.value, s=ambilDataEkspedisi(b,t);
-            if(!s) {hitungEkspedisi();terapkanKunciKeamanan();return;}
+            if(!s) {
+                hitungEkspedisi(); terapkanKunciKeamanan(); 
+                setTimeout(() => {
+                    const n = new Date();
+                    if (+ekspedisiBulan.value === (n.getMonth() + 1) && +ekspedisiTahun.value === n.getFullYear()) {
+                        const el = document.getElementById(`exp-tanggal-${t}-${b}-${n.getDate()}`);
+                        if (el) el.closest('.book')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 300);
+                return;
+            }
             Object.keys(s.hari||{}).forEach(h=>{
                 const k=`${t}-${b}-${h}`, d=s.hari[h], date=document.getElementById("exp-tanggal-"+k);
                 if(date) date.value=d.tanggal||"";
@@ -615,6 +636,15 @@
                 }
             });
             hitungEkspedisi(); terapkanKunciKeamanan();
+            
+            // Auto-scroll langsung ke tanggal hari ini
+            setTimeout(() => {
+                const n = new Date();
+                if (+ekspedisiBulan.value === (n.getMonth() + 1) && +ekspedisiTahun.value === n.getFullYear()) {
+                    const el = document.getElementById(`exp-tanggal-${t}-${b}-${n.getDate()}`);
+                    if (el) el.closest('.book')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
         }
 
 
