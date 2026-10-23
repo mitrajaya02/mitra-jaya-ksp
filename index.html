@@ -865,22 +865,23 @@ function kirimLaporanWA() {
         currentSaldoAwal = akhir;
     }
 
-    let itemJaya1 = {storting: 0, drop: 0}, itemJaya2 = {storting: 0, drop: 0}, itemJaya3 = {storting: 0, drop: 0};
+    let itemJaya1 = {storting: 0, drop: 0, tabunganKeluar: 0}, itemJaya2 = {storting: 0, drop: 0, tabunganKeluar: 0}, itemJaya3 = {storting: 0, drop: 0, tabunganKeluar: 0};
     const kBase = `${t}-${b}-${hariKe}`;
     
     if (document.getElementById(`storting-${kBase}-0`)) {
-        itemJaya1 = {storting: nilai(`storting-${kBase}-0`), drop: nilai(`drop-${kBase}-0`)};
-        itemJaya2 = {storting: nilai(`storting-${kBase}-1`), drop: nilai(`drop-${kBase}-1`)};
-        itemJaya3 = {storting: nilai(`storting-${kBase}-2`), drop: nilai(`drop-${kBase}-2`)};
+        itemJaya1 = {storting: nilai(`storting-${kBase}-0`), drop: nilai(`drop-${kBase}-0`), tabunganKeluar: nilai(`tabunganKeluar-${kBase}-0`)};
+        itemJaya2 = {storting: nilai(`storting-${kBase}-1`), drop: nilai(`drop-${kBase}-1`), tabunganKeluar: nilai(`tabunganKeluar-${kBase}-1`)};
+        itemJaya3 = {storting: nilai(`storting-${kBase}-2`), drop: nilai(`drop-${kBase}-2`), tabunganKeluar: nilai(`tabunganKeluar-${kBase}-2`)};
     } else if(rekap && rekap.hari && rekap.hari[hariKe] && rekap.hari[hariKe].items) {
         const its = rekap.hari[hariKe].items;
-        if(its[0]) itemJaya1 = {storting: parseAngka(its[0].storting), drop: parseAngka(its[0].drop)};
-        if(its[1]) itemJaya2 = {storting: parseAngka(its[1].storting), drop: parseAngka(its[1].drop)};
-        if(its[2]) itemJaya3 = {storting: parseAngka(its[2].storting), drop: parseAngka(its[2].drop)};
+        if(its[0]) itemJaya1 = {storting: parseAngka(its[0].storting), drop: parseAngka(its[0].drop), tabunganKeluar: parseAngka(its[0].tabunganKeluar)};
+        if(its[1]) itemJaya2 = {storting: parseAngka(its[1].storting), drop: parseAngka(its[1].drop), tabunganKeluar: parseAngka(its[1].tabunganKeluar)};
+        if(its[2]) itemJaya3 = {storting: parseAngka(its[2].storting), drop: parseAngka(its[2].drop), tabunganKeluar: parseAngka(its[2].tabunganKeluar)};
     }
     
     let totalStortingHariIni = itemJaya1.storting + itemJaya2.storting + itemJaya3.storting;
     let totalDropHariIni = itemJaya1.drop + itemJaya2.drop + itemJaya3.drop;
+    let totalTabunganKeluarHariIni = itemJaya1.tabunganKeluar + itemJaya2.tabunganKeluar + itemJaya3.tabunganKeluar;
 
     let expText = "";
     if(listPengeluaran.length > 0) {
@@ -896,11 +897,12 @@ function kirimLaporanWA() {
                 `_Laporan Rekap Harian & Kas_\n` +
                 `📅 *Tanggal:* ${displayTgl}\n\n` +
                 `*1. Rekapitulasi Resort:*\n` +
-                `* Jaya 1 - Storting: Rp ${angka(itemJaya1.storting)} | Drop: Rp ${angka(itemJaya1.drop)}\n` +
-                `* Jaya 2 - Storting: Rp ${angka(itemJaya2.storting)} | Drop: Rp ${angka(itemJaya2.drop)}\n` +
-                `* Jaya 3 - Storting: Rp ${angka(itemJaya3.storting)} | Drop: Rp ${angka(itemJaya3.drop)}\n` +
+                `* Jaya 1 - Storting: Rp ${angka(itemJaya1.storting)} | Drop: Rp ${angka(itemJaya1.drop)} | Tab. Keluar: Rp ${angka(itemJaya1.tabunganKeluar)}\n` +
+                `* Jaya 2 - Storting: Rp ${angka(itemJaya2.storting)} | Drop: Rp ${angka(itemJaya2.drop)} | Tab. Keluar: Rp ${angka(itemJaya2.tabunganKeluar)}\n` +
+                `* Jaya 3 - Storting: Rp ${angka(itemJaya3.storting)} | Drop: Rp ${angka(itemJaya3.drop)} | Tab. Keluar: Rp ${angka(itemJaya3.tabunganKeluar)}\n` +
                 `total storting hari ini Rp ${angka(totalStortingHariIni)}\n` +
-                `👉 *Total Drop Hari Ini:* Rp ${angka(totalDropHariIni)}\n\n` +
+                `👉 *Total Drop Hari Ini:* Rp ${angka(totalDropHariIni)}\n` +
+                `👉 *Total Tabungan Keluar:* Rp ${angka(totalTabunganKeluarHariIni)}\n\n` +
                 `*2. Posisi Kas & Ekspedisi:*\n` +
                 `* Kas Masuk: Rp ${angka(kasMasuk)}\n` +
                 `* *Rincian Pengeluaran:*\n` +
