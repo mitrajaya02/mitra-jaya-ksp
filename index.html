@@ -750,14 +750,44 @@
         function cetakStaff(){window.print()} 
 
 
-        function latestExp(){let best=null;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k?.startsWith("koperasi-ekspedisi-"))continue;try{const d=JSON.parse(localStorage.getItem(k)),score=(d.tahun||0)*100+(d.bulan||0);if(d.saldoKasAkhir!==undefined&&(!best||score>best.score))best={score,d}}catch(e){}}return best?.d||null} 
+        function getSaldoEkspedisiTerbaru() {
+            const n = new Date();
+            const b = n.getMonth() + 1;
+            const t = n.getFullYear();
+            const dEksp = ambilDataEkspedisi(b, t);
+            let awal = ambilSaldoKasAwalEkspedisi(b, t);
+            let akhirTerakhir = awal;
+            
+            for(let h=1; h<=jumlahHari(b, t); h++) {
+                const hData = dEksp?.hari?.[h];
+                let pe = 0;
+                if(hData && hData.pengeluaran) {
+                    pe = hData.pengeluaran.reduce((s, x) => s + parseAngka(x.jumlah), 0);
+                }
+                const masuk = ambilKasMasukRekap(h, b, t);
+                const tunai = ambilTunaiPasarRekap(h, b, t);
+                const sementara = awal + masuk - pe;
+                const akhir = sementara - tunai;
+                
+                if(hData && hData.tanggal) {
+                    akhirTerakhir = akhir;
+                }
+                awal = akhir;
+            }
+            return akhirTerakhir;
+        }
+
         function staffTotal(t){const d=staffData(t);let s=0;d.names.forEach((_,r)=>d.dates.forEach(dt=>s+=parseAngka(d.v[r+"|"+dt])));return s} 
-        
+
         function updateCash(){
-            const e=latestExp(),exp=parseAngka(e?.saldoKasAkhir),simp=staffTotal("simp"),bon=staffTotal("bon"),kas=exp+simp-bon;
-            document.getElementById("cashValue").textContent="KMJ KAS Rp "+(angka(kas)||"0");
-            document.getElementById("cashDetail").textContent="Saldo Ekspedisi "+(angka(exp)||"0")+" + Simpanan "+(angka(simp)||"0")+" - Bon "+(angka(bon)||"0");
-        } 
+            const exp = getSaldoEkspedisiTerbaru();
+            const simp = staffTotal("simp");
+            const bon = staffTotal("bon");
+            const kas = exp + simp - bon;
+            
+            document.getElementById("cashValue").textContent = "KMJ KAS Rp " + (angka(kas) || "0");
+            document.getElementById("cashDetail").textContent = "Saldo Ekspedisi " + (angka(exp) || "0") + " + Simpanan " + (angka(simp) || "0") + " - Bon " + (angka(bon) || "0");
+        }
 
 
         // --- FITUR KIRIM LAPORAN KE WHATSAPP ---
