@@ -407,47 +407,11 @@
         function buatRekap(){const b=+bulan.value,t=+tahun.value;if(!b||!t)return;rekapContainer.innerHTML="";for(let h=1;h<=jumlahHari(b,t);h++)buatHari(h,b,t);loadData();updateSaveButton()} 
         function buatHari(h,b,t){const box=document.createElement("div");box.className="card";box.innerHTML=`<div class="table-wrap"><table class="rekap-table"><thead><tr><th>Tanggal</th><th>Nama Resort</th><th>Storting</th><th>Tunai<br>Pasar</th><th>Tabungan<br>5%</th><th>ADM<br>5%</th><th>Jumlah</th><th>Drop</th><th>Drop<br>20%</th><th>Drop<br>120%</th><th>Tabungan<br>Keluar</th><th>Saldo</th></tr></thead><tbody id="tbody-${h}"></tbody></table></div>`;rekapContainer.appendChild(box);const tb=document.getElementById("tbody-"+h),dk=`${t}-${b}-${h}`;resortNames.forEach((n,i)=>{const k=dk+"-"+i,r=document.createElement("tr");r.innerHTML=`${i===0?`<td class="date-cell" rowspan="3"><div class="date-action-box"><input class="manual-date" type="date" id="tanggal-${dk}" readonly><button type="button" class="date-today-btn no-print" onclick="buatTanggalHariIni('rekap','${dk}')">TANGGAL</button></div></td>`:""}<td class="resort-name">${n}</td><td><input type="text" inputmode="numeric" id="storting-${k}" oninput="formatInput(this)"></td><td class="calculated" id="tunai-${k}">0</td><td class="calculated" id="tabungan5-${k}">0</td><td class="calculated" id="adm5-${k}">0</td><td class="calculated" id="jumlah-${k}">0</td><td><input type="text" inputmode="numeric" id="drop-${k}" oninput="formatInput(this)"></td><td class="calculated" id="drop20-${k}">0</td><td class="calculated" id="drop120-${k}">0</td><td><input type="text" inputmode="numeric" id="tabunganKeluar-${k}" oninput="formatInput(this)"></td><td class="calculated" id="saldo-${k}">0</td>`;tb.appendChild(r)});const mk=(cl,l,p)=>{const r=document.createElement("tr");r.className=cl;r.innerHTML=`<td colspan="2">${l}</td>${["Storting","Tunai","Tabungan5","Adm5","Jumlah","Drop","Drop20","Drop120","TabunganKeluar","Saldo"].map(x=>`<td id="${p}${x}-${h}">0</td>`).join("")}`;tb.appendChild(r)};mk("saldo-awal-row","Saldo awal","awal");mk("total-row","Total hari","total");mk("saldo-akhir-row","Saldo akhir","akhir")} 
         
-        // PERBAIKAN REKAP: Menarik saldo akhir bulan sebelumnya secara otomatis untuk kesinambungan antar bulan
-        function getClosingBalance(b, t) {
-            let prevB = b - 1, prevT = t;
-            if(prevB < 1) { prevB = 12; prevT = t - 1; }
-            let awal = {storting:0, tunai:0, tabungan5:0, adm5:0, jumlah:0, drop:0, drop20:0, drop120:0, tabunganKeluar:0, saldo:0};
-            const days = jumlahHari(prevB, prevT);
-            const d = ambilDataRekap(prevB, prevT);
-            
-            for(let h=1; h<=days; h++) {
-                let dayData = d.hari[h];
-                let totStorting = 0, totDrop = 0, totTk = 0;
-                if(dayData && dayData.items) {
-                    dayData.items.forEach(it => {
-                        totStorting += parseAngka(it.storting);
-                        totDrop += parseAngka(it.drop);
-                        totTk += parseAngka(it.tabunganKeluar);
-                    });
-                }
-                const tb5 = totDrop * 0.05;
-                const adm = totDrop * 0.05;
-                const jumlah = totStorting + tb5 + adm;
-                const keb = totDrop + totTk;
-                const tunai = jumlah < keb ? keb - jumlah : 0;
-                const saldo = jumlah >= keb ? jumlah - keb : 0;
-                
-                const tot = {
-                    storting: totStorting, tunai: tunai, tabungan5: tb5, adm5: adm,
-                    jumlah: jumlah, drop: totDrop, drop20: totDrop * 0.2, drop120: totDrop * 1.2,
-                    tabunganKeluar: totTk, saldo: saldo
-                };
-                let akhir = {};
-                Object.keys(tot).forEach(x => { akhir[x] = awal[x] + tot[x]; });
-                awal = akhir;
-            }
-            return awal;
-        }
-
+        // REKAP HARIAN: Selalu dimulai dari 0 di awal bulan tanpa membawa saldo bulan lalu
         function hitungSemuaHari(){
             const b=+bulan.value,t=+tahun.value;
             if(!b||!t)return;
-            let awal = getClosingBalance(b, t);
+            let awal = {storting:0, tunai:0, tabungan5:0, adm5:0, jumlah:0, drop:0, drop20:0, drop120:0, tabunganKeluar:0, saldo:0};
             for(let h=1; h<=jumlahHari(b,t); h++) {
                 awal = hitungHari(h,b,t,awal).akhir;
             }
@@ -575,7 +539,7 @@
         function ambilKasMasukRekap(h,b,t){const d=ambilDataRekap(b,t);if(!d?.hari?.[h])return 0;return(d.hari[h].items||[]).reduce((s,x)=>{const j=parseAngka(x.storting)+parseAngka(x.drop)*.1,k=parseAngka(x.drop)+parseAngka(x.tabunganKeluar);return s+(j>=k?j-k:0)},0)} 
         function ambilTunaiPasarRekap(h,b,t){const d=ambilDataRekap(b,t);if(!d?.hari?.[h])return 0;return(d.hari[h].items||[]).reduce((s,x)=>{const j=parseAngka(x.storting)+parseAngka(x.drop)*.1,k=parseAngka(x.drop)+parseAngka(x.tabunganKeluar);return s+(j<k?k-j:0)},0)} 
         
-        // PERBAIKAN EKSPEDISI: Fungsi dinamis untuk menghitung saldo akhir bulan sebelumnya secara akurat
+        // EKSPEDISI: Tetap membawa saldo akhir bulan sebelumnya secara akurat
         function getMonthlyClosing(b, t) {
             let curB = b, curT = t;
             let path = [];
